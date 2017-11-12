@@ -1,0 +1,32 @@
+{
+  "framework": "jasmine2",
+  "src_files": [
+    "node_modules/sham-ui/lib/shamUI.min.js",
+    "lib/view.js",
+    "spec/support/*.js",
+    "spec/views.js",
+    "spec/*.spec.js"
+  ],
+  "watch_files": [
+    "lib/*.js",
+    "lib/**/*.js",
+    "bin/shamui-templates",
+    "spec/views/*.html"
+  ],
+  "before_tests": "bin/shamui-templates --output spec/views.js -- spec/views/*.html",
+  "on_exit": "rm spec/views.js",
+  "launch_in_ci": [
+    "Chrome"
+  ],
+  "launch_in_dev": [
+    "Chrome"
+  ],
+  "browser_args": {
+    "Chrome": [
+      "--disable-gpu",
+      "--headless",
+      "--remote-debugging-port=9222",
+      "--window-size=1440,900"
+    ]
+  }
+}

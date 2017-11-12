@@ -1,0 +1,101 @@
+<SimpleDom>
+    <div>
+        ShamUIView Moon Delight
+    </div>
+</SimpleDom>
+<Tag>
+    <div>
+        Custom tag
+    </div>
+</Tag>
+<TextNode>
+    <p>{{ text }}</p>
+</TextNode>
+<AttributeVariable>
+    <input type="text" value="{{ value }}">
+</AttributeVariable>
+<TextNodeAround>
+    <p>foo {{ bar }} baz</p>
+</TextNodeAround>
+<AttributeVariableAround>
+    <div class="foo {{ bar }} baz"></div>
+</AttributeVariableAround>
+<ComplexSpotWithTwoVariables>
+    <div class="{{ foo }} {{ bar }}"></div>
+</ComplexSpotWithTwoVariables>
+<TwoTopLevelNodes>
+    <p>first</p>
+
+    <p>second</p>
+</TwoTopLevelNodes>
+<CommonIf>
+    <div>
+        <p>
+            {% if a %}a{% endif %}
+        </p>
+
+        <p>
+            {% for b %}b{% endfor %}
+        </p>
+    </div>
+</CommonIf>
+<CommonIfWithPlaceholders>
+    <div>
+        {% if a %}a{% endif %}
+        {% if b %}b{% endif %}
+    </div>
+</CommonIfWithPlaceholders>
+<CommonInFor>
+    <div>
+        {% if a %}a{% endif %}
+        {% for b %}i{% endfor %}
+    </div>
+</CommonInFor>
+<CommonFilters>
+    <p>{{ text | append('case') | upperCase }}</p>
+</CommonFilters>
+<CommonExpressions>
+    <a title="{{ (a + b) * c / d }}">{{ more.amazing + features[0] + features[1] }}</a>
+</CommonExpressions>
+<EmptyAttr>
+    <input type="checkbox" value="" checked>
+</EmptyAttr>
+<AttrWithoutQuotes>
+    <div class={{ name }}></div>
+</AttrWithoutQuotes>
+<Query>
+    <div id="one" class="foo"></div>
+    <div id="two" class="boo">
+        <div id="three" class="baz"></div>
+    </div>
+</Query>
+<Globals>
+    <i>
+        {{ host == window.location.host ? 'expr' : '' }},
+        {% if host == window.location.host %}if{% endif %},
+        {% for i of [host == window.location.host] %}{{ i ? 'for' : '' }}{% endfor %},
+        <i class="{{ host == window.location.host ? 'attr' : '' }}"></i>,
+        <GlobalsCustom host={{ host == window.location.host }}>
+            {{ host ? 'custom' : '' }}
+        </GlobalsCustom>
+    </i>
+</Globals>
+<GlobalsList>
+  {{ Array.isArray(array) ? 'array' : '' }},
+  {{ Math.pow(2, 2) }},
+  {{ Object.keys(obj).join(';') }},
+  {{ JSON.stringify(obj) }}
+</GlobalsList>
+<EmptyExpression>
+    {{ 1 + 2 * 3 }}
+</EmptyExpression>
+<DefaultValue>
+    <div id="{{ id || foo }}" class="{{ boo || 'default' }}">{{ content || 'emp' + 'ty' }}</div>
+</DefaultValue>
+<Comment>
+    <!-- comment with <tags> and {{ expr }}, {% tags %}, --, #, //, >. (c). -->
+    <span>Moon</span>
+</Comment>
+<HtmlEntity>
+    &quot;&amp;&apos;&lt;&gt;&copy;&pound;&plusmn;&para;&ensp;&mdash;&emsp;&euro;&thinsp;&hearts;&notExists;
+</HtmlEntity>

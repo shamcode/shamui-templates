@@ -1,0 +1,54 @@
+<Loop>
+    <ul>
+        {% for key, value of list %}
+            <li>{{ key }}:{{ value }}</li>
+        {% endfor %}
+    </ul>
+</Loop>
+<LoopA>
+    <div>
+        {% for value of list %}
+            <p>{{ value }}{{ ext }}</p>
+        {% endfor %}
+    </div>
+</LoopA>
+<LoopObject>
+    <div>
+        {% for key, value of obj %}
+            {{ key }}: {{ value }};
+        {% endfor %}
+    </div>
+</LoopObject>
+<LoopObjectWithoutOptions>
+    <div>
+        {% for obj %}
+            {{ name }};
+        {% endfor %}
+    </div>
+</LoopObjectWithoutOptions>
+<LoopWithCustomTag>
+    <div>
+        <MyUl list="{{ list }}"/>
+    </div>
+</LoopWithCustomTag>
+<MyUl>
+    <ul>
+        {% for element of list %}
+        <MyLi props="{{ element }}"/>
+        {% endfor %}
+    </ul>
+</MyUl>
+<MyLi>
+    <li>{{ props.id + ':' + props.value }}</li>
+</MyLi>
+<LoopLocaleVariableExpose>
+    <section>
+        {% for a of as %}
+            <i>
+                {% for b of bs %}
+                    <b>{{ b }}</b>
+                {% endfor %}
+            </i>
+        {% endfor %}
+    </section>
+</LoopLocaleVariableExpose>
