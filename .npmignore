@@ -1,0 +1,6 @@
+/src/
+/spec/
+.idea
+TODO.md
+README.md
+testem.json
