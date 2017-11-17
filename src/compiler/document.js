@@ -7,7 +7,7 @@ export default {
 
         if ( options.asModule ) {
             return sourceNode( node.loc, [
-                `var ShamUIView = require('shamui-templates/view');\n`,
+                `var ShamUIView = require('sham-ui-templates/view');\n`,
                 figure.generate(), `\n`,
                 `module.exports = ${figure.name};\n`
             ] );

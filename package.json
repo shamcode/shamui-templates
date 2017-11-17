@@ -1,9 +1,9 @@
 {
   "name": "sham-ui-templates",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "main": "lib/index.js",
-  "browser": "shamui-view.js",
+  "browser": "lib/view.js",
   "babel": {
     "presets": [
       "es2015"
@@ -22,9 +22,9 @@
     "test": "testem ci",
     "build:parser": "preprocess src/parser/grammar.jison ./src/parser > src/parser/grammar.full.jison && jison src/parser/grammar.full.jison -o src/parser/index.js",
     "build": "babel -d lib/ src/",
-    "build:view": "BABEL_ENV=browser babel shamui-view.js -o lib/view.js",
+    "build:view": "BABEL_ENV=browser babel sham-ui-view.js -o lib/view.js",
     "watch": "babel -w -d lib/ src/",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build && npm run build:view"
   },
   "license": "MIT",
   "dependencies": {
@@ -47,14 +47,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sham-ui/shamui-templates.git"
+    "url": "git+https://github.com/sham-ui/sham-ui-templates.git"
   },
   "keywords": [
     "sham-ui"
   ],
   "author": "shamcode",
   "bugs": {
-    "url": "https://github.com/sham-ui/shamui-templates/issues"
+    "url": "https://github.com/sham-ui/sham-ui-templates/issues"
   },
-  "homepage": "https://github.com/sham-ui/shamui-templates#readme"
+  "homepage": "https://github.com/sham-ui/sham-ui-templates#readme"
 }

@@ -10,10 +10,10 @@
   "watch_files": [
     "lib/*.js",
     "lib/**/*.js",
-    "bin/shamui-templates",
+    "bin/sham-ui-templates",
     "spec/views/*.html"
   ],
-  "before_tests": "bin/shamui-templates --output spec/views.js -- spec/views/*.html",
+  "before_tests": "bin/sham-ui-templates --output spec/views.js -- spec/views/*.html",
   "on_exit": "rm spec/views.js",
   "launch_in_ci": [
     "Chrome"
