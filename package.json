@@ -1,9 +1,9 @@
 {
   "name": "sham-ui-templates",
-  "version": "0.0.2",
-  "description": "",
+  "version": "0.0.3",
+  "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "main": "lib/index.js",
-  "browser": "lib/view.js",
+  "browser": "shamui-view.js",
   "babel": {
     "presets": [
       "es2015"
@@ -44,5 +44,17 @@
     "phantomjs": "^2.1.7",
     "preprocessor": "^1.4.0",
     "testem": "^1.18.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sham-ui/shamui-templates.git"
+  },
+  "keywords": [
+    "sham-ui"
+  ],
+  "author": "shamcode",
+  "bugs": {
+    "url": "https://github.com/sham-ui/shamui-templates/issues"
+  },
+  "homepage": "https://github.com/sham-ui/shamui-templates#readme"
 }
