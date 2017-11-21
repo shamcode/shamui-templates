@@ -78,7 +78,7 @@ function generateId( name ) {
     return `${name}${IDCounterByName[ name ]++}`;
 }
 
-class ShamUIView extends Widget {
+export default class ShamUIView extends Widget {
     constructor() {
         super( ...arguments );
         this.nested = [];

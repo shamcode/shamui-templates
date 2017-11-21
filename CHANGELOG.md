@@ -1,3 +1,6 @@
+## 0.0.7
+Export default ShamUIView
+
 ## 0.0.6
 Import `widget` from package
 
