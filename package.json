@@ -1,6 +1,6 @@
 {
   "name": "sham-ui-templates",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
@@ -27,7 +27,7 @@
     "test": "testem ci",
     "build:parser": "preprocess src/parser/grammar.jison ./src/parser > src/parser/grammar.full.jison && jison src/parser/grammar.full.jison -o src/parser/index.js",
     "build": "babel -d lib/ src/",
-    "build:view": "BABEL_ENV=browser babel sham-ui-view.js -o lib/view.js",
+    "build:view": "BABEL_ENV=browser babel view.js -o lib/view.js",
     "watch": "babel -w -d lib/ src/",
     "prepublish": "npm run build && npm run build:view"
   },

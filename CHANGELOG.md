@@ -1,3 +1,6 @@
+## 0.0.8
+Change name of `sham-ui-view.js` to `view.js`
+
 ## 0.0.7
 Export default ShamUIView
 
