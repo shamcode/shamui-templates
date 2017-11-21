@@ -1,3 +1,6 @@
+## 0.0.11
+Fix import
+
 ## 0.0.10
 Change name of `sham-ui-view.js` to `sham-ui-widget.js`
 
