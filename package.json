@@ -1,7 +1,8 @@
 {
   "name": "sham-ui-templates",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
+  "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
   "browser": "lib/view.js",
   "babel": {
