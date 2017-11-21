@@ -1,3 +1,6 @@
+## 0.0.13
+Auto merge current state with options
+
 ## 0.0.12
 Update sham-ui@1.3.1
 
