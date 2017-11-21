@@ -3,3 +3,4 @@
 /spec/views.js
 *.full.jison
 .idea
+sham-ui-view.js
