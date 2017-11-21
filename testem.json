@@ -2,7 +2,7 @@
   "framework": "jasmine2",
   "src_files": [
     "node_modules/sham-ui/lib/shamUI.min.js",
-    "sham-ui-view.js",
+    "sham-ui-widget.js",
     "spec/support/*.js",
     "spec/views.js",
     "spec/*.spec.js"

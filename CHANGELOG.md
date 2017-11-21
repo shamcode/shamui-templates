@@ -1,3 +1,6 @@
+## 0.0.10
+Change name of `sham-ui-view.js` to `sham-ui-widget.js`
+
 ## 0.0.9
 Change `browser` file
 
