@@ -1,3 +1,6 @@
+## 0.0.12
+Update sham-ui@1.3.1
+
 ## 0.0.11
 Fix import
 
