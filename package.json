@@ -1,6 +1,6 @@
 {
   "name": "sham-ui-templates",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
@@ -14,7 +14,11 @@
         "plugins": [
           "transform-decorators-legacy",
           "transform-class-properties",
-          "transform-es2015-modules-umd"
+          ["transform-es2015-modules-umd", {
+            "globals": {
+              "sham-ui": "shamUI"
+            }
+          }]
         ]
       }
     }

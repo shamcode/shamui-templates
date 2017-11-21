@@ -1,3 +1,6 @@
+## 0.0.6
+Import `widget` from package
+
 ## 0.0.5
 Fix import from `sham-ui-templates/view` to `sham-ui-templates`
 Add `bin` into `package.json`

@@ -1,4 +1,4 @@
-const { Widget, options } = window.shamUI;
+import { Widget, options } from 'sham-ui';
 
 //
 // Helper function for working with foreach loops data.
