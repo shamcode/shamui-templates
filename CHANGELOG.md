@@ -1,3 +1,6 @@
+## 0.0.14
+Call `update` after `render` 
+
 ## 0.0.13
 Auto merge current state with options
 

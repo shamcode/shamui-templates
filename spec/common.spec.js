@@ -42,10 +42,9 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should insert variable as text node', function() {
-        const { view, rendered } = render( () => new TextNode( '#root', 'text-node' ) );
-        view.update( {
+        const { view, rendered } = render( () => new TextNode( '#root', 'text-node', {
             text: 'To understand what recursion is, you must first understand recursion.'
-        } );
+        } ) );
         expect( view ).toBe(
             '<p>To understand what recursion is, you must first understand recursion.</p>'
         );
@@ -55,10 +54,9 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should insert variable in attributes', function() {
-        const { view, rendered } = render( () => new AttributeVariable( '#root', 'attribute-variable' ) );
-        view.update( {
+        const { view, rendered } = render( () => new AttributeVariable( '#root', 'attribute-variable', {
             value: 'Value'
-        } );
+        } ) );
         expect( view.nodes[ 0 ].value ).toEqual( 'Value' );
         expect( rendered ).toEqual( [
             'attribute-variable'
@@ -66,10 +64,9 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should properly work with text constants in text nodes', function() {
-        const { view, rendered } = render( () => new TextNodeAround( '#root', 'text-node-around' ) );
-        view.update( {
+        const { view, rendered } = render( () => new TextNodeAround( '#root', 'text-node-around', {
             bar: 'bar'
-        } );
+        } ) );
         expect( view ).toBeLike( '<p>foo bar baz</p>' );
         expect( rendered ).toEqual( [
             'text-node-around'
@@ -78,11 +75,10 @@ describe( 'ShamUIView', function() {
 
     it( 'should properly work with text constants in attributes', function() {
         const { view, rendered } = render(
-            () => new AttributeVariableAround( '#root', 'attribute-variable-around' )
+            () => new AttributeVariableAround( '#root', 'attribute-variable-around', {
+                bar: 'bar'
+            } )
         );
-        view.update( {
-            bar: 'bar'
-        } );
         expect( view ).toBe( '<div class="foo bar baz"></div>' );
         expect( rendered ).toEqual( [
             'attribute-variable-around'
@@ -91,12 +87,11 @@ describe( 'ShamUIView', function() {
 
     it( 'should save value for variables in complex cases', function() {
         const { rendered, view } = render(
-            () => new ComplexSpotWithTwoVariables( '#root', 'complex-spot-with-two-variables' )
+            () => new ComplexSpotWithTwoVariables( '#root', 'complex-spot-with-two-variables', {
+                foo: 'first',
+                bar: 'second'
+            } )
         );
-        view.update( {
-            foo: 'first',
-            bar: 'second'
-        } );
         expect( view ).toBe( '<div class="first second"></div>' );
         expect( rendered ).toEqual( [
             'complex-spot-with-two-variables'
@@ -123,13 +118,15 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should optimize "if"/"for" tag, if it is only child', function() {
-        const { view, rendered } = render( () => new CommonIf( '#root', 'common-if' ) );
-        view.update( { a: true, b: [ 1 ] } );
+        const { view, rendered } = render( () => new CommonIf( '#root', 'common-if', {
+            a: true,
+            b: [ 1 ]
+        } ) );
         expect( view ).toBe( '<div><p>a</p><p>b</p></div>' );
         expect( rendered ).toEqual( [
-            'common-if',
             'CommonIf_if00',
-            'CommonIf_for20'
+            'CommonIf_for20',
+            'common-if'
         ] );
     } );
 
@@ -164,10 +161,9 @@ describe( 'ShamUIView', function() {
         };
 
         const { view, rendered } = render(
-            () => new CommonFilters( '#root', 'common-filters', { filters } )
+            () => new CommonFilters( '#root', 'common-filters', { filters, text: 'upper_' } )
         );
 
-        view.update( { text: 'upper_' } );
         expect( view ).toBe( '<p>UPPER_CASE</p>' );
         expect( rendered ).toEqual( [
             'common-filters'
@@ -175,8 +171,7 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should work with expressions', function() {
-        const { view, rendered } = render( () => new CommonExpressions( '#root', 'common-expressions' ) );
-        view.update( {
+        const { view, rendered } = render( () => new CommonExpressions( '#root', 'common-expressions', {
             a: 1,
             b: 2,
             c: 100,
@@ -185,7 +180,7 @@ describe( 'ShamUIView', function() {
                 amazing: 'a'
             },
             features: [ 'b', 'c' ]
-        } );
+        } ) );
         expect( view ).toBe( '<a title="150">abc</a>' );
         expect( rendered ).toEqual( [
             'common-expressions'
@@ -210,8 +205,7 @@ describe( 'ShamUIView', function() {
     } );
 
     it( 'should render attributes without quotes', function() {
-        const { view, rendered } = render( () => new AttrWithoutQuotes( '#root', 'attr-without-quotes' ) );
-        view.update( { name: 'name' } );
+        const { view, rendered } = render( () => new AttrWithoutQuotes( '#root', 'attr-without-quotes', { name: 'name' } ) );
 
         expect( view ).toBe( '<div class="name"></div>' );
         expect( rendered ).toEqual( [
@@ -232,25 +226,25 @@ describe( 'ShamUIView', function() {
 
     it( 'should support global variables', function() {
         {
-            const { view, rendered } = render( () => new Globals( '#root', 'globals' ) );
-            view.update( { host: window.location.host } );
+            const { view, rendered } = render( () => new Globals( '#root', 'globals', {
+                host: window.location.host
+            } ) );
             expect( view ).toBeLike(
                 '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i>, custom<!--GlobalsCustom--></i>'
             );
             expect( rendered ).toEqual( [
-                'globals',
                 'Globals_if00',
                 'Globals_for20',
-                'GlobalsCustom0'
+                'GlobalsCustom0',
+                'globals'
             ] );
         }
 
         {
-            const { view, rendered } = render( () => new GlobalsList( '#root', 'globals-list' ) );
-            view.update( {
+            const { view, rendered } = render( () => new GlobalsList( '#root', 'globals-list', {
                 array: [ 1, 2, 3 ],
                 obj: { a: 1, b: 2 }
-            } );
+            } ) );
             expect( view ).toBeLike( 'array, 4, a;b, {"a":1,"b":2}' );
             expect( rendered ).toEqual( [
                 'globals-list'

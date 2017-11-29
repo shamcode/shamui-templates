@@ -34,13 +34,9 @@ describe( 'Import', function() {
     } );
 
     it( 'should require and mount template', function() {
-        const { view, rendered } = render( () => new imports( '#root', 'imports' ) );
-        expect( rendered ).toEqual( [
-            'imports'
-        ] );
-        view.update( {
+        const { view, rendered } = render( () => new imports( '#root', 'imports', {
             text: 'upper'
-        } );
+        } ) );
         expect( view ).toBe( '<section>UPPER</section>' );
         expect( rendered ).toEqual( [
             'imports'

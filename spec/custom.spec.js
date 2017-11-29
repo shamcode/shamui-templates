@@ -34,22 +34,17 @@ describe( 'Custom tags', function() {
     } );
 
     it( 'should properly work with attributes', function() {
-        const { view, rendered } = render( () => new CustomAttributes( '#root', 'custom-attributes' ) );
-        expect( rendered ).toEqual( [
-            'CustomPanel0',
-            'custom-attributes'
-        ] );
-        view.update( {
+        const { view, rendered } = render( () => new CustomAttributes( '#root', 'custom-attributes', {
             value: 'title',
             text: 'content'
-        } );
+        } ) );
         expect( view ).toBe(
             '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>title</h1><div>content</div><!--CustomPanel--></div>'
         );
         expect( rendered ).toEqual( [
             'CustomPanel0',
-            'custom-attributes',
-            'CustomPanel1'
+            'CustomPanel1',
+            'custom-attributes'
         ] );
         view.update( { value: 'updated' } );
         expect( view ).toBe(
@@ -57,8 +52,8 @@ describe( 'Custom tags', function() {
         );
         expect( rendered ).toEqual( [
             'CustomPanel0',
-            'custom-attributes',
-            'CustomPanel1'
+            'CustomPanel1',
+            'custom-attributes'
         ] );
     } );
 

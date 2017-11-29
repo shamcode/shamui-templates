@@ -34,14 +34,13 @@ describe( 'Spread attributes', function() {
     } );
 
     it( 'should work for html elements', function() {
-        const { view, rendered } = render( () => new SpreadElementAttributes( '#root', 'spread-element-attributes' ) );
-        view.update( {
+        const { view, rendered } = render( () => new SpreadElementAttributes( '#root', 'spread-element-attributes', {
             attr: {
                 id: 'id',
                 'data-attr': 'data',
                 'class': 'foo'
             }
-        } );
+        } ) );
         expect( view ).toBe( '<div id="id" data-attr="data" class="foo"></div>' );
         expect( rendered ).toEqual( [
             'spread-element-attributes'
@@ -67,8 +66,7 @@ describe( 'Spread attributes', function() {
     } );
 
     it( 'should override variables attributes', function() {
-        const { view, rendered } = render( () => new SpreadAttributesWithVar( '#root', 'spread-attributes-with-var' ) );
-        view.update( { id: "foo" } );
+        const { view, rendered } = render( () => new SpreadAttributesWithVar( '#root', 'spread-attributes-with-var', { id: "foo" } ) );
         expect( view ).toBe( '<div id="foo"></div>' );
         expect( rendered ).toEqual( [
             'spread-attributes-with-var'
@@ -92,18 +90,17 @@ describe( 'Spread attributes', function() {
     } );
 
     it( 'should work for custom tags', function() {
-        const { view, rendered } = render( () => new SpreadCustomAttributes( '#root', 'spread-custom-attributes' ) );
-        expect( rendered ).toEqual( [
-            'SpreadCustom0',
-            'spread-custom-attributes'
-        ] );
-        view.update( {
+        const { view, rendered } = render( () => new SpreadCustomAttributes( '#root', 'spread-custom-attributes', {
             attr: {
                 foo: 'foo',
                 boo: 'boo',
                 bar: 'bar'
             }
-        } );
+        } ) );
+        expect( rendered ).toEqual( [
+            'SpreadCustom0',
+            'spread-custom-attributes'
+        ] );
         expect( view ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
         expect( rendered ).toEqual( [
             'SpreadCustom0',

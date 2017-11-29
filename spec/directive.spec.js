@@ -66,13 +66,9 @@ describe( 'Directive', function() {
         spyOn( directive.prototype, 'unbind' );
 
         const directives = { directive };
-        const options = { directives };
+        const options = { directives, value: true };
 
         const { view, rendered } = render( () => new DirectiveOne( '#root', 'directive-one', options ) );
-        expect( rendered ).toEqual( [
-            'directive-one'
-        ] );
-        view.update( { value: true } );
         expect( rendered ).toEqual( [
             'directive-one'
         ] );

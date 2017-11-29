@@ -266,6 +266,8 @@ export default class ShamUIView extends Widget {
         if ( this.onRender ) {
             this.onRender();
         }
+
+        this.update();
     }
 
     /**

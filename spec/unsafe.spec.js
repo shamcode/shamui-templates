@@ -56,8 +56,9 @@ describe( 'Unsafe', function() {
     } );
 
     it( 'should remove old DOM nodes and insert new', function() {
-        const { view, rendered } = render( () => new UnsafeWithVariables( '#root', 'unsafe-with-variables' ) );
-        view.update( { html: '<div>foo</div><br>' } );
+        const { view, rendered } = render( () => new UnsafeWithVariables( '#root', 'unsafe-with-variables', {
+            html: '<div>foo</div><br>'
+        } ) );
         expect( view ).toBe( '<div><div>foo</div><br></div>' );
 
         view.update( { html: '<input type="datetime"><hr><div>baz</div>' } );
@@ -74,8 +75,9 @@ describe( 'Unsafe', function() {
     } );
 
     it( 'should insert unsafe with placeholders', function() {
-        const { view, rendered } = render( () => new UnsafeWithPlaceholder( '#root', 'unsafe-with-placeholder' ) );
-        view.update( { html: '<hr>' } );
+        const { view, rendered } = render( () => new UnsafeWithPlaceholder( '#root', 'unsafe-with-placeholder', {
+            html: '<hr>'
+        } ) );
         expect( view ).toBe( '<div><br><!--unsafe--><hr><!--unsafe--></div>' );
 
         view.update( { html: '<br><!-- comment --><link href="http://ShamUIView.js.org">' } );
