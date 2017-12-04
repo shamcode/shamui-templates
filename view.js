@@ -111,11 +111,20 @@ export default class ShamUIView extends Widget {
         } else {
             this.directives = null;
         }
+        this.__data__ = super.options;
     }
 
     @options
     get actionSequence() {
         return [ 'render', 'bindEvents' ];
+    }
+
+    get options() {
+        return this.__data__;
+    }
+
+    set options( value ) {
+        return super.options = value;
     }
 
     resolveContainer() {

@@ -176,7 +176,7 @@ export class Figure {
             `${this.name}.prototype.update = function (__currentData__) {\n`
         );
 
-        sn.add( `  var __data__ = Object.assign({}, this.options, this.__data__, __currentData__);\n` );
+        sn.add( `  var __data__ = Object.assign({}, this.__data__, __currentData__);\n` );
 
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
             .sort( ( a, b ) => a.length - b.length );
