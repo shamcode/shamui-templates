@@ -111,6 +111,10 @@ export default class ShamUIView extends Widget {
         } else {
             this.directives = null;
         }
+
+        Object.defineProperty( this, 'constructorOptions', {
+            value: this._options
+        } );
     }
 
     @options
@@ -372,7 +376,7 @@ export default class ShamUIView extends Widget {
     }
 
     resetAndUpdate( data ) {
-        this.__data__ = {};
+        this.options = Object.assign( {}, this.constructorOptions, data );
         this.update( data );
     }
 }
