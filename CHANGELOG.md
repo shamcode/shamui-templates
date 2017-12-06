@@ -1,3 +1,6 @@
+## 0.0.15
+Merge options with current state
+
 ## 0.0.14
 Call `update` after `render` 
 
