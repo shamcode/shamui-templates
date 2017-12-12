@@ -1,3 +1,7 @@
+## 0.0.16
+Merge options with current state
+Update dependency
+
 ## 0.0.15
 Merge options with current state
 
