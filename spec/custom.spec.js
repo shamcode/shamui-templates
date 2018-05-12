@@ -10,7 +10,14 @@ describe( 'Custom tags', function() {
         } );
         const UI = new window.shamUI.default();
         UI.render.on( 'RenderComplete', ( event, renderedWidgets ) => {
-            rendered.push( ...renderedWidgets );
+            renderedWidgets.forEach( id => {
+                const index = id.lastIndexOf( '~' );
+                if ( -1 === index ) {
+                    rendered.push( id );
+                } else {
+                    rendered.push( id.substring( 0, index ) );
+                }
+            } );
         } );
         UI.render.FORCE_ALL();
         return { view, rendered };
@@ -42,8 +49,8 @@ describe( 'Custom tags', function() {
             '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>title</h1><div>content</div><!--CustomPanel--></div>'
         );
         expect( rendered ).toEqual( [
-            'CustomPanel0',
-            'CustomPanel1',
+            'CustomPanel',
+            'CustomPanel',
             'custom-attributes'
         ] );
         view.update( { value: 'updated' } );
@@ -51,8 +58,8 @@ describe( 'Custom tags', function() {
             '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>updated</h1><div>content</div><!--CustomPanel--></div>'
         );
         expect( rendered ).toEqual( [
-            'CustomPanel0',
-            'CustomPanel1',
+            'CustomPanel',
+            'CustomPanel',
             'custom-attributes'
         ] );
     } );
@@ -63,8 +70,8 @@ describe( 'Custom tags', function() {
             .toBe( '<div><p>inline</p><!--custom-inline--><p>inline</p><!--custom-inline--></div>'
         );
         expect( rendered ).toEqual( [
-            'custom_inline0',
-            'custom_inline1',
+            'custom_inline',
+            'custom_inline',
             'custom-inline'
         ] );
     } );

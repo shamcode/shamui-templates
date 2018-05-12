@@ -10,7 +10,14 @@ describe( 'For tags', function() {
         } );
         const UI = new window.shamUI.default();
         UI.render.on( 'RenderComplete', ( event, renderedWidgets ) => {
-            rendered.push( ...renderedWidgets );
+            renderedWidgets.forEach( id => {
+                const index = id.lastIndexOf( '~' );
+                if ( -1 === index ) {
+                    rendered.push( id );
+                } else {
+                    rendered.push( id.substring( 0, index ) );
+                }
+            } );
         } );
         UI.render.FORCE_ALL();
         return { view, rendered };
@@ -39,30 +46,30 @@ describe( 'For tags', function() {
         } ) );
         expect( view ).toBeLike( '<ul><li>0:1</li><li>1:2</li><li>2:3</li></ul>' );
         expect( rendered ).toEqual( [
-            'Loop_for00',
-            'Loop_for01',
-            'Loop_for02',
+            'Loop_for0',
+            'Loop_for0',
+            'Loop_for0',
             'loop'
         ] );
 
         view.update( { list: [ 1, 3 ] } );
         expect( view ).toBeLike( '<ul><li>0:1</li><li>1:3</li></ul>' );
         expect( rendered ).toEqual( [
-            'Loop_for00',
-            'Loop_for01',
-            'Loop_for02',
+            'Loop_for0',
+            'Loop_for0',
+            'Loop_for0',
             'loop'
         ] );
 
         view.update( { list: [ 'a', 'b', 'c', 'd' ] } );
         expect( view ).toBeLike( '<ul><li>0:a</li><li>1:b</li><li>2:c</li><li>3:d</li></ul>' );
         expect( rendered ).toEqual( [
-            'Loop_for00',
-            'Loop_for01',
-            'Loop_for02',
+            'Loop_for0',
+            'Loop_for0',
+            'Loop_for0',
             'loop',
-            'Loop_for03',
-            'Loop_for04',
+            'Loop_for0',
+            'Loop_for0',
         ] );
     } );
 
@@ -73,9 +80,9 @@ describe( 'For tags', function() {
         } ) );
         expect( view ).toBeLike( '<div><p>1.js</p><p>2.js</p><p>3.js</p></div>' );
         expect( rendered ).toEqual( [
-            'LoopA_for00',
-            'LoopA_for01',
-            'LoopA_for02',
+            'LoopA_for0',
+            'LoopA_for0',
+            'LoopA_for0',
             'loop-a'
         ] );
     } );
@@ -90,9 +97,9 @@ describe( 'For tags', function() {
         } ) );
         expect( view ).toBeLike( '<div>a: 1; b: 2; c: 3; </div>' );
         expect( rendered ).toEqual( [
-            'LoopObject_for00',
-            'LoopObject_for01',
-            'LoopObject_for02',
+            'LoopObject_for0',
+            'LoopObject_for0',
+            'LoopObject_for0',
             'loop-object'
         ] );
 
@@ -105,9 +112,9 @@ describe( 'For tags', function() {
         } );
         expect( view ).toBeLike( '<div>a: 1; c: 3; d: 4; </div>' );
         expect( rendered ).toEqual( [
-            'LoopObject_for00',
-            'LoopObject_for01',
-            'LoopObject_for02',
+            'LoopObject_for0',
+            'LoopObject_for0',
+            'LoopObject_for0',
             'loop-object'
         ] );
     } );
@@ -122,9 +129,9 @@ describe( 'For tags', function() {
         } ) );
         expect( view ).toBeLike( '<div>a; b; c; </div>' );
         expect( rendered ).toEqual( [
-            'LoopObjectWithoutOptions_for00',
-            'LoopObjectWithoutOptions_for01',
-            'LoopObjectWithoutOptions_for02',
+            'LoopObjectWithoutOptions_for0',
+            'LoopObjectWithoutOptions_for0',
+            'LoopObjectWithoutOptions_for0',
             'loop-object-without-options'
         ] );
     } );
@@ -139,9 +146,9 @@ describe( 'For tags', function() {
         } ) );
         expect( view ).toBeLike( '<div>a; b; c; </div>' );
         expect( rendered ).toEqual( [
-            'LoopObjectWithoutOptions_for03',
-            'LoopObjectWithoutOptions_for04',
-            'LoopObjectWithoutOptions_for05',
+            'LoopObjectWithoutOptions_for0',
+            'LoopObjectWithoutOptions_for0',
+            'LoopObjectWithoutOptions_for0',
             'loop-object-without-options'
         ] );
     } );
@@ -167,13 +174,13 @@ describe( 'For tags', function() {
             '<div><ul><li>1:a</li><!--MyLi--><li>2:b</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>'
         );
         expect( rendered ).toEqual( [
-            'MyUl0',
-            'MyUl_for00',
-            'MyUl_for01',
-            'MyUl_for02',
-            'MyLi0',
-            'MyLi1',
-            'MyLi2',
+            'MyUl',
+            'MyUl_for0',
+            'MyUl_for0',
+            'MyUl_for0',
+            'MyLi',
+            'MyLi',
+            'MyLi',
             'loop-with-custom-tag'
         ] );
 
@@ -191,13 +198,13 @@ describe( 'For tags', function() {
         } );
         expect( view ).toBe( '<div><ul><li>1:a</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>' );
         expect( rendered ).toEqual( [
-            'MyUl0',
-            'MyUl_for00',
-            'MyUl_for01',
-            'MyUl_for02',
-            'MyLi0',
-            'MyLi1',
-            'MyLi2',
+            'MyUl',
+            'MyUl_for0',
+            'MyUl_for0',
+            'MyUl_for0',
+            'MyLi',
+            'MyLi',
+            'MyLi',
             'loop-with-custom-tag'
         ] );
     } );
@@ -212,12 +219,12 @@ describe( 'For tags', function() {
             '<section><i><b>1</b><b>2</b></i><i><b>1</b><b>2</b></i></section>'
         );
         expect( rendered ).toEqual( [
-            'LoopLocaleVariableExpose_for00',
-            'LoopLocaleVariableExpose_for01',
-            'LoopLocaleVariableExpose_for0_for00',
-            'LoopLocaleVariableExpose_for0_for01',
-            'LoopLocaleVariableExpose_for0_for02',
-            'LoopLocaleVariableExpose_for0_for03',
+            'LoopLocaleVariableExpose_for0',
+            'LoopLocaleVariableExpose_for0',
+            'LoopLocaleVariableExpose_for0_for0',
+            'LoopLocaleVariableExpose_for0_for0',
+            'LoopLocaleVariableExpose_for0_for0',
+            'LoopLocaleVariableExpose_for0_for0',
             'loop-locale-variable-expose'
         ] );
     } );

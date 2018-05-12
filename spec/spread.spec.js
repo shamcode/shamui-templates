@@ -10,7 +10,14 @@ describe( 'Spread attributes', function() {
         } );
         const UI = new window.shamUI.default();
         UI.render.on( 'RenderComplete', ( event, renderedWidgets ) => {
-            rendered.push( ...renderedWidgets );
+            renderedWidgets.forEach( id => {
+                const index = id.lastIndexOf( '~' );
+                if ( -1 === index ) {
+                    rendered.push( id );
+                } else {
+                    rendered.push( id.substring( 0, index ) );
+                }
+            } );
         } );
         UI.render.FORCE_ALL();
         return { view, rendered };
@@ -98,12 +105,12 @@ describe( 'Spread attributes', function() {
             }
         } ) );
         expect( rendered ).toEqual( [
-            'SpreadCustom0',
+            'SpreadCustom',
             'spread-custom-attributes'
         ] );
         expect( view ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
         expect( rendered ).toEqual( [
-            'SpreadCustom0',
+            'SpreadCustom',
             'spread-custom-attributes'
         ] );
 
@@ -114,7 +121,7 @@ describe( 'Spread attributes', function() {
         } );
         expect( view ).toBe( '<div><i>foo</i><i>Boo-Ya</i><i>bar</i></div>' );
         expect( rendered ).toEqual( [
-            'SpreadCustom0',
+            'SpreadCustom',
             'spread-custom-attributes'
         ] );
     } );
@@ -138,7 +145,7 @@ describe( 'Spread attributes', function() {
         } );
         expect( view ).toBe( '<div><i>over foo</i><i>boo</i><i>bar</i></div>' );
         expect( rendered ).toEqual( [
-            'SpreadCustom1',
+            'SpreadCustom',
             'spread-custom-attributes-with-const'
         ] );
     } );
@@ -168,7 +175,7 @@ describe( 'Spread attributes', function() {
         expect( view ).toBe( '<div><i>over foo</i><i>boo</i><i>bar</i></div>' );
         expect( rendered ).toEqual( [
             'spread-custom-attributes-with-var',
-            'SpreadCustom2'
+            'SpreadCustom'
         ] );
     } );
 

@@ -10,7 +10,14 @@ describe( 'ShamUIView', function() {
         } );
         const UI = new window.shamUI.default();
         UI.render.on( 'RenderComplete', ( event, renderedWidgets ) => {
-            rendered.push( ...renderedWidgets );
+            renderedWidgets.forEach( id => {
+                const index = id.lastIndexOf( '~' );
+                if ( -1 === index ) {
+                    rendered.push( id );
+                } else {
+                    rendered.push( id.substring( 0, index ) );
+                }
+            } );
         } );
         UI.render.FORCE_ALL();
         return { view, rendered };
@@ -124,8 +131,8 @@ describe( 'ShamUIView', function() {
         } ) );
         expect( view ).toBe( '<div><p>a</p><p>b</p></div>' );
         expect( rendered ).toEqual( [
-            'CommonIf_if00',
-            'CommonIf_for20',
+            'CommonIf_if0',
+            'CommonIf_for2',
             'common-if'
         ] );
     } );
@@ -233,9 +240,9 @@ describe( 'ShamUIView', function() {
                 '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i>, custom<!--GlobalsCustom--></i>'
             );
             expect( rendered ).toEqual( [
-                'Globals_if00',
-                'Globals_for20',
-                'GlobalsCustom0',
+                'Globals_if0',
+                'Globals_for2',
+                'GlobalsCustom',
                 'globals'
             ] );
         }
