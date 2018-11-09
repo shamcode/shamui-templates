@@ -4,51 +4,91 @@
   "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
-  "browser": "./sham-ui-widget.js",
   "babel": {
     "presets": [
-      "es2015"
+      [
+        "@babel/preset-env"
+      ]
     ],
-    "env": {
-      "browser": {
-        "plugins": [
-          "transform-decorators-legacy",
-          "transform-class-properties",
-          ["transform-es2015-modules-umd", {
-            "globals": {
-              "sham-ui": "shamUI"
-            }
-          }]
+    "plugins": [
+      "@babel/plugin-transform-runtime",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
+  },
+  "jest": {
+    "projects": [
+      {
+        "displayName": "test",
+        "transform": {
+          "^.+\\.js$": "babel-jest"
+        },
+        "collectCoverageFrom": [
+          "src/**/*.js"
+        ],
+        "testPathIgnorePatterns": [
+          "<rootDir>/node_modules/",
+          "<rootDir>/__tests__/helpers.js",
+          "<rootDir>/spec/"
+        ],
+        "testURL": "http://sham-ui.example.com"
+      },
+      {
+        "runner": "jest-runner-eslint",
+        "displayName": "lint",
+        "testMatch": [
+          "<rootDir>/src/**/*.js",
+          "<rootDir>/__tests__/**/*.js",
+          "<rootDir>/bin/**/*.js"
+        ],
+        "testPathIgnorePatterns": [
+          "<rootDir>/src/parser/index.js"
         ]
       }
-    }
+    ]
   },
   "scripts": {
-    "test": "testem ci",
+    "test": "jest --coverage",
+    "test:watch": "jest --watchAll",
     "build:parser": "preprocess src/parser/grammar.jison ./src/parser > src/parser/grammar.full.jison && jison src/parser/grammar.full.jison -o src/parser/index.js",
     "build": "babel -d lib/ src/",
-    "build:view": "BABEL_ENV=browser babel view.js -o sham-ui-widget.js",
-    "watch": "babel -w -d lib/ src/",
-    "prepublish": "npm run build && npm run build:view"
+    "prepublish": "yarn build"
   },
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.1.5",
     "asciitree": "^1.0.2",
     "commander": "^2.9.0",
     "sham-ui": "1.3.5",
     "source-map": "^0.5.6"
   },
   "devDependencies": {
-    "babel-plugin-transform-class-properties": "^6.18.0",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-cli": "^6.9.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-    "babel-preset-es2015": "^6.9.0",
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.2",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "eslint": "^5.7.0",
+    "eslint-plugin-jest": "^21.26.0",
+    "jest": "^23.6.0",
+    "jest-runner-eslint": "^0.7.1",
     "jison": "^0.4.17",
-    "phantomjs": "^2.1.7",
-    "preprocessor": "^1.4.0",
-    "testem": "^1.18.0"
+    "preprocessor": "^1.4.0"
   },
   "repository": {
     "type": "git",

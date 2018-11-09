@@ -38,7 +38,7 @@ export default {
             sourceNode( node.loc, [
                 `      `,
                 node.otherwise ? `result = ` : ``,
-                `ShamUIView.cond(_this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                `__UI__.cond(_this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
                     node.cond ), `)`
             ] )
         );
@@ -47,7 +47,7 @@ export default {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
                     `      `,
-                    `ShamUIView.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result)`
+                    `__UI__.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result)`
                 ] )
             ).declareVariable( 'result' );
         }

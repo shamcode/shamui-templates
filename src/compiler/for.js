@@ -18,7 +18,7 @@ export default {
             figure.declare( sourceNode( `var ${placeholder} = document.createComment('for');` ) );
         }
 
-        figure.declare( sourceNode( `var ${childrenName} = new ShamUIView.Map();` ) );
+        figure.declare( sourceNode( `var ${childrenName} = new __UI__.Map();` ) );
 
         // for (
 
@@ -27,7 +27,7 @@ export default {
         figure.thisRef = true;
         figure.spot( variablesOfExpression ).add(
             sourceNode( node.loc, [
-                `      ShamUIView.loop(_this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                `      __UI__.loop(_this, ${placeholder}, ${childrenName}, ${templateName}, `,
                 compile( node.expr ),
                 (
                     node.options === null ? `` : [ `, `, esc( node.options ) ]

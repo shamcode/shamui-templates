@@ -30,7 +30,7 @@ export default {
 
                 figure.spot( attr.identifier.name ).add(
                     sourceNode( node.loc,
-                        `      ShamUIView.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${attr.identifier.name})`
+                        `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${attr.identifier.name})`
                     )
                 );
 
@@ -55,7 +55,7 @@ export default {
 
             figure.spot( variables ).add(
                 sourceNode( node.loc,
-                    `      ShamUIView.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data})`
+                    `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data})`
                 )
             );
 
@@ -63,7 +63,7 @@ export default {
 
             figure.addRenderActions(
                 sourceNode( node.loc,
-                    `    ShamUIView.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data});`
+                    `    __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data});`
                 ) );
 
         }

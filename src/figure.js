@@ -43,10 +43,8 @@ export class Figure {
             ` * @class\n`,
             ` */\n`,
             `function ${this.name}() {\n`,
-            `  ShamUIView.apply(this, arguments);\n`
+            `  __UI__.Widget.apply(this, arguments);\n`
         ] );
-
-        sn.add( `  this.__data__ = {};\n` );
 
         if ( this.isCacheNeeded() ) {
             sn.add( `  this.__cache__ = {};\n` );
@@ -134,7 +132,7 @@ export class Figure {
         sn.add( `}\n` );
 
         sn.add( [
-            `${this.name}.prototype = Object.create(ShamUIView.prototype);\n`,
+            `${this.name}.prototype = Object.create(__UI__.Widget.prototype);\n`,
             `${this.name}.prototype.constructor = ${this.name};\n`,
             `${this.name}.prototype.name = '${this.name}';\n`
         ] );
