@@ -40,36 +40,6 @@ describe( 'ShamUIView', function() {
         DI = window.DI;
     } );
 
-    it( 'should render simple DOM', function() {
-        const { view, rendered } = render( () => new SimpleDom( '#root', 'simple-dom' ) );
-        expect( view ).toBe( '<div> ShamUIView Moon Delight </div>' );
-        expect( rendered ).toEqual( [
-            'simple-dom'
-        ] )
-    } );
-
-    it( 'should insert variable as text node', function() {
-        const { view, rendered } = render( () => new TextNode( '#root', 'text-node', {
-            text: 'To understand what recursion is, you must first understand recursion.'
-        } ) );
-        expect( view ).toBe(
-            '<p>To understand what recursion is, you must first understand recursion.</p>'
-        );
-        expect( rendered ).toEqual( [
-            'text-node'
-        ] );
-    } );
-
-    it( 'should insert variable in attributes', function() {
-        const { view, rendered } = render( () => new AttributeVariable( '#root', 'attribute-variable', {
-            value: 'Value'
-        } ) );
-        expect( view.nodes[ 0 ].value ).toEqual( 'Value' );
-        expect( rendered ).toEqual( [
-            'attribute-variable'
-        ] );
-    } );
-
     it( 'should properly work with text constants in text nodes', function() {
         const { view, rendered } = render( () => new TextNodeAround( '#root', 'text-node-around', {
             bar: 'bar'

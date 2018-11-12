@@ -39,7 +39,7 @@ export function renderWidget( widgetConstructor, options = {} ) {
                 widget,
                 html: body.innerHTML,
                 text: body.textContent
-            } )
+            } );
         } );
         UI.render.ALL();
     } );
