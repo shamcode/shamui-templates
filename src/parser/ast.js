@@ -1,23 +1,23 @@
 function DocumentNode( body, loc ) {
-    this.type = "Document";
+    this.type = 'Document';
     this.body = body;
     this.loc = loc;
 }
 
 function TextNode( text, loc ) {
-    this.type = "Text";
+    this.type = 'Text';
     this.text = text;
     this.loc = loc;
 }
 
 function CommentNode( comment, loc ) {
-    this.type = "Comment";
+    this.type = 'Comment';
     this.comment = comment;
     this.loc = loc;
 }
 
 function ElementNode( name, attributes, body, loc ) {
-    this.type = "Element";
+    this.type = 'Element';
     this.name = name;
     this.attributes = attributes;
     this.body = body;
@@ -25,20 +25,20 @@ function ElementNode( name, attributes, body, loc ) {
 }
 
 function AttributeNode( name, body, loc ) {
-    this.type = "Attribute";
+    this.type = 'Attribute';
     this.name = name;
     this.body = body;
     this.loc = loc;
 }
 
 function SpreadAttributeNode( identifier, loc ) {
-    this.type = "SpreadAttribute";
+    this.type = 'SpreadAttribute';
     this.identifier = identifier;
     this.loc = loc;
 }
 
 function DirectiveNode( name, body, loc ) {
-    this.type = "Directive";
+    this.type = 'Directive';
     this.name = name;
     this.body = body;
     this.loc = loc;
@@ -58,7 +58,7 @@ function ImportStatementNode( identifier, path, loc ) {
 }
 
 function IfStatementNode( cond, then, otherwise, loc ) {
-    this.type = "IfStatement";
+    this.type = 'IfStatement';
     this.cond = cond;
     this.then = then;
     this.otherwise = otherwise;
@@ -66,7 +66,7 @@ function IfStatementNode( cond, then, otherwise, loc ) {
 }
 
 function ForStatementNode( expr, body, options, loc ) {
-    this.type = "ForStatement";
+    this.type = 'ForStatement';
     this.expr = expr;
     this.body = body;
     this.options = options;
@@ -74,43 +74,43 @@ function ForStatementNode( expr, body, options, loc ) {
 }
 
 function UnsafeStatementNode( html, loc ) {
-    this.type = "UnsafeStatement";
+    this.type = 'UnsafeStatement';
     this.html = html;
     this.loc = loc;
 }
 
 function FilterExpressionNode( callee, args, loc ) {
-    this.type = "FilterExpression";
+    this.type = 'FilterExpression';
     this.callee = callee;
     this.arguments = args;
     this.loc = loc;
 }
 
 function ThisExpressionNode( loc ) {
-    this.type = "ThisExpression";
+    this.type = 'ThisExpression';
     this.loc = loc;
 }
 
 function ArrayExpressionNode( elements, loc ) {
-    this.type = "ArrayExpression";
+    this.type = 'ArrayExpression';
     this.elements = elements;
     this.loc = loc;
 }
 
 function ObjectExpressionNode( properties, loc ) {
-    this.type = "ObjectExpression";
+    this.type = 'ObjectExpression';
     this.properties = properties;
     this.loc = loc;
 }
 
 function SequenceExpressionNode( expressions, loc ) {
-    this.type = "SequenceExpression";
+    this.type = 'SequenceExpression';
     this.expressions = expressions;
     this.loc = loc;
 }
 
 function UnaryExpressionNode( operator, prefix, argument, loc ) {
-    this.type = "UnaryExpression";
+    this.type = 'UnaryExpression';
     this.operator = operator;
     this.prefix = prefix;
     this.argument = argument;
@@ -118,7 +118,7 @@ function UnaryExpressionNode( operator, prefix, argument, loc ) {
 }
 
 function BinaryExpressionNode( operator, left, right, loc ) {
-    this.type = "BinaryExpression";
+    this.type = 'BinaryExpression';
     this.operator = operator;
     this.left = left;
     this.right = right;
@@ -126,7 +126,7 @@ function BinaryExpressionNode( operator, left, right, loc ) {
 }
 
 function AssignmentExpressionNode( operator, left, right, loc ) {
-    this.type = "AssignmentExpression";
+    this.type = 'AssignmentExpression';
     this.operator = operator;
     this.left = left;
     this.right = right;
@@ -134,7 +134,7 @@ function AssignmentExpressionNode( operator, left, right, loc ) {
 }
 
 function UpdateExpressionNode( operator, argument, prefix, loc ) {
-    this.type = "UpdateExpression";
+    this.type = 'UpdateExpression';
     this.operator = operator;
     this.argument = argument;
     this.prefix = prefix;
@@ -142,7 +142,7 @@ function UpdateExpressionNode( operator, argument, prefix, loc ) {
 }
 
 function LogicalExpressionNode( operator, left, right, loc ) {
-    this.type = "LogicalExpression";
+    this.type = 'LogicalExpression';
     this.operator = operator;
     this.left = left;
     this.right = right;
@@ -150,7 +150,7 @@ function LogicalExpressionNode( operator, left, right, loc ) {
 }
 
 function ConditionalExpressionNode( test, consequent, alternate, loc ) {
-    this.type = "ConditionalExpression";
+    this.type = 'ConditionalExpression';
     this.test = test;
     this.consequent = consequent;
     this.alternate = alternate;
@@ -158,21 +158,21 @@ function ConditionalExpressionNode( test, consequent, alternate, loc ) {
 }
 
 function NewExpressionNode( callee, args, loc ) {
-    this.type = "NewExpression";
+    this.type = 'NewExpression';
     this.callee = callee;
     this.arguments = args;
     this.loc = loc;
 }
 
 function CallExpressionNode( callee, args, loc ) {
-    this.type = "CallExpression";
+    this.type = 'CallExpression';
     this.callee = callee;
     this.arguments = args;
     this.loc = loc;
 }
 
 function MemberExpressionNode( object, property, computed, loc ) {
-    this.type = "MemberExpression";
+    this.type = 'MemberExpression';
     this.object = object;
     this.property = property;
     this.computed = computed;
@@ -180,19 +180,19 @@ function MemberExpressionNode( object, property, computed, loc ) {
 }
 
 function IdentifierNode( name, loc ) {
-    this.type = "Identifier";
+    this.type = 'Identifier';
     this.name = name;
     this.loc = loc;
 }
 
 function AccessorNode( name, loc ) {
-    this.type = "Accessor";
+    this.type = 'Accessor';
     this.name = name;
     this.loc = loc;
 }
 
 function LiteralNode( value, loc ) {
-    this.type = "Literal";
+    this.type = 'Literal';
     this.value = value;
     this.loc = loc;
 }

@@ -31,7 +31,7 @@ function trim( node, key ) {
 
     // Skip empty text nodes.
     for ( let i = 0; i < node[ key ].length; i++ ) {
-        if ( node[ key ][ i ].type == 'Text' ) {
+        if ( node[ key ][ i ].type === 'Text' ) {
             if ( node[ key ][ i ].text.replace( /^\s+|\s+$/g, '' ) === '' ) {
                 skipped = true;
                 continue; // Skip this node.

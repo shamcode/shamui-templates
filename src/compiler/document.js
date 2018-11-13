@@ -7,12 +7,12 @@ export default {
 
         if ( options.asModule ) {
             return sourceNode( node.loc, [
-                figure.generate(), `\n`,
+                figure.generate(), '\n',
                 `module.exports = ${figure.name};\n`
             ] );
         } else {
             return sourceNode( node.loc, [
-                figure.generate(), `\n`,
+                figure.generate(), '\n',
                 `window.${figure.name} = ${figure.name};\n`
             ] );
         }

@@ -7,8 +7,8 @@ export function collectVariables( scope, node ) {
         nodes.forEach( ( node ) => {
             visit( node, {
                 Identifier: ( node ) => {
-                    if ( variables.indexOf( node.name ) == -1 &&
-                        scope.indexOf( node.name ) == -1 ) {
+                    if ( variables.indexOf( node.name ) === -1 &&
+                        scope.indexOf( node.name ) === -1 ) {
                         variables.push( node.name );
                     }
                 }

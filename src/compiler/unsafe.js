@@ -26,16 +26,16 @@ export default {
 
         let variables = collectVariables( figure.getScope(), node.html );
 
-        if ( variables.length == 0 ) {
+        if ( variables.length === 0 ) {
             figure.addRenderActions(
                 sourceNode( node.loc, [
-                    `      __unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), `);`
+                    `      __unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ');'
                 ] )
             );
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc, [
-                    `      __unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), `)`
+                    `      __unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ')'
                 ] )
             );
         }
@@ -53,25 +53,30 @@ export default {
  * @param html {string} Unsafe html to insert.
  */
 function unsafe( root, nodes, html ) {
-    var node, j, i = nodes.length, element = document.createElement( 'div' );
+    var j, i = nodes.length, element = document.createElement( 'div' );
     element.innerHTML = html;
 
-    while ( i-- > 0 )
+    while ( i-- > 0 ) {
         nodes[ i ].parentNode.removeChild( nodes.pop() );
+    }
 
-    for ( i = j = element.childNodes.length - 1; j >= 0; j-- )
+    for ( i = j = element.childNodes.length - 1; j >= 0; j-- ) {
         nodes.push( element.childNodes[ j ] );
+    }
 
     ++i;
-    if ( root.nodeType == 8 )
-        if ( root.parentNode )
-            while ( i-- > 0 )
+    if ( root.nodeType === 8 ) {
+        if ( root.parentNode ) {
+            while ( i-- > 0 ) {
                 root.parentNode.insertBefore( nodes[ i ], root );
-
-        else
-            throw "Can not insert child view into parent node. You need append your view first and then update.";
-
-    else
-        while ( i-- > 0 )
+            }
+        } else {
+            throw 'Can not insert child view into parent node. ' +
+                'You need append your view first and then update.';
+        }
+    } else {
+        while ( i-- > 0 ) {
             root.appendChild( nodes[ i ] );
+        }
+    }
 }

@@ -36,17 +36,17 @@ export default {
 
         figure.spot( variablesOfExpression ).add(
             sourceNode( node.loc, [
-                `      `,
-                node.otherwise ? `result = ` : ``,
+                '      ',
+                node.otherwise ? 'result = ' : '',
                 `__UI__.cond(_this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                    node.cond ), `)`
+                    node.cond ), ')'
             ] )
         );
 
         if ( node.otherwise ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
-                    `      `,
+                    '      ',
                     `__UI__.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result)`
                 ] )
             ).declareVariable( 'result' );
@@ -63,7 +63,7 @@ export default {
                 sourceNode( loc, [
                     `    if (${childName}.ref) {\n`,
                     `      ${childName}.ref.update(__data__);\n`,
-                    `    }`
+                    '    }'
                 ] )
             );
         };

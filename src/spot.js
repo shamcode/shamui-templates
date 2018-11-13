@@ -14,7 +14,7 @@ export class Spot {
 
     generate() {
         let sn = sourceNode(
-            `function (${this.variables.join( `, ` )}) {\n`
+            `function (${this.variables.join( ', ' )}) {\n`
         );
 
         Object.keys( this.declaredVariables ).forEach( name => {

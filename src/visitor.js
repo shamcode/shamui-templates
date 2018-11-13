@@ -122,7 +122,7 @@ const visitors = {
     ObjectExpression: ( node, visitor ) => {
         handle( node, visitor );
 
-        var i, j, properties = node.properties;
+        var i, j, properties = node.properties, len, plen, blen;
 
         for ( i = 0, len = properties.length; i < len; i++ ) {
             var prop = properties[ i ];
@@ -130,7 +130,7 @@ const visitors = {
             var key = prop.key;
             var value = prop.value;
 
-            if ( kind === "init" ) {
+            if ( kind === 'init' ) {
                 visit( key, visitor );
                 visit( value, visitor );
             } else {

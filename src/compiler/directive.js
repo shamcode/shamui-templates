@@ -4,6 +4,7 @@ import { compileToExpression } from './attribute';
 import { hyphensToCamelCase } from '../utils';
 
 export default {
+
     /**
      * Compile directive of regular nodes.
      *
@@ -22,7 +23,7 @@ export default {
             sourceNode( node.loc, [
                 `    if (${directive} === undefined) {\n`,
                 `      ${directive} = new _this.directives.${node.name}();\n`,
-                `    }\n`,
+                '    }\n',
                 `    ${directive}.bind(${parent.reference});`
             ] )
         );
@@ -33,23 +34,23 @@ export default {
         );
 
 
-        let [ expr, ] = compileToExpression( figure, node, compile );
+        let [ expr ] = compileToExpression( figure, node, compile );
         var variables = collectVariables( figure.getScope(), expr );
 
-        if ( variables.length == 0 ) {
+        if ( variables.length === 0 ) {
             figure.addRenderActions(
                 sourceNode( node.loc, [
                     `    ${directive}.update(`, (
-                        expr ? compile( expr ) : `undefined`
-                    ), `);`
+                        expr ? compile( expr ) : 'undefined'
+                    ), ');'
                 ] )
             );
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc, [
-                    `      ${directive}.update(`, compile( expr ), `)`
+                    `      ${directive}.update(`, compile( expr ), ')'
                 ] )
-            )
+            );
         }
     }
 };

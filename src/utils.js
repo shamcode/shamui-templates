@@ -27,8 +27,8 @@ export function unique( a ) {
 
 export function isSingleChild( parent, node ) {
     if ( parent ) {
-        if ( parent.type == 'Element' ) {
-            if ( parent.body.length == 1 && parent.body[ 0 ] == node ) {
+        if ( parent.type === 'Element' ) {
+            if ( parent.body.length === 1 && parent.body[ 0 ] === node ) {
                 return true;
             }
         }

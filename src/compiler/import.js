@@ -1,10 +1,12 @@
 import { sourceNode } from './sourceNode';
 
 export default {
+
     /**
      * @return {null}
      */
     ImportStatement: ( { node, figure } ) => {
+
         // TODO: Add support for ES2015 imports.
         figure.root().addImport(
             sourceNode( node.loc,

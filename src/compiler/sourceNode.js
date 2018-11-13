@@ -1,8 +1,9 @@
 import { SourceNode } from 'source-map';
 
 export function sourceNode( loc, chunk ) {
+
     // Check call arity.
-    if ( chunk == undefined ) {
+    if ( chunk === undefined ) {
         chunk = loc;
         loc = null;
     }

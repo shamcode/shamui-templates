@@ -26,7 +26,7 @@ export default {
 
         // Collect info about variables and attributes.
         for ( let attr of node.attributes ) {
-            if ( attr.type == 'SpreadAttribute' ) {
+            if ( attr.type === 'SpreadAttribute' ) {
 
                 figure.spot( attr.identifier.name ).add(
                     sourceNode( node.loc,
@@ -36,7 +36,7 @@ export default {
 
             } else {
 
-                let [ expr, ] = compileToExpression( figure, attr, compile ); // TODO: Add support for default value in custom tag attributes attr={{ value || 'default' }}.
+                let [ expr ] = compileToExpression( figure, attr, compile ); // TODO: Add support for default value in custom tag attributes attr={{ value || 'default' }}.
                 variables = variables.concat( collectVariables( figure.getScope(), expr ) );
 
                 let property = sourceNode( node.loc, [ `'${attr.name}': ${compile( expr )}` ] );

@@ -21,6 +21,7 @@ const plainAttributes = [ 'id', 'value', 'checked', 'selected' ];
 const booleanAttributes = [ 'checked', 'selected' ];
 
 export default {
+
     /**
      * Compile attributes of regular nodes.
      *
@@ -34,7 +35,7 @@ export default {
 
         var variables = collectVariables( figure.getScope(), expr );
 
-        if ( variables.length == 0 ) {
+        if ( variables.length === 0 ) {
             figure.construct( sourceNode( node.loc, [
                 attr( node.loc,
                     parent.reference,
@@ -44,6 +45,7 @@ export default {
                     ) )
             ] ) );
         } else {
+
             // When rendering attributes with more then one variable,
             // Will wait for all data, before setting attribute.
             //
@@ -96,15 +98,15 @@ export default {
      */
     SpreadAttribute: ( { parent, node, figure } ) => {
         figure.root().addFunction( '__spread', sourceNode( [
-            `function (node, attr) {\n`,
-            `  for (var property in attr) if (attr.hasOwnProperty(property)) {\n`,
+            'function (node, attr) {\n',
+            '  for (var property in attr) if (attr.hasOwnProperty(property)) {\n',
             `    if (property in ${esc( arrayToObject( plainAttributes ) )}) {\n`,
-            `      node[property] = attr[property];\n`,
-            `    } else {\n`,
-            `      node.setAttribute(property, attr[property]);\n`,
-            `    }\n`,
-            `  }\n`,
-            `}`
+            '      node[property] = attr[property];\n',
+            '    } else {\n',
+            '      node.setAttribute(property, attr[property]);\n',
+            '    }\n',
+            '  }\n',
+            '}'
         ] ) );
 
         let attr = node.identifier.name;
@@ -134,10 +136,11 @@ export function compileToExpression( figure, node, compile ) {
     let expr, defaults = [];
 
     let pushDefaults = ( node ) => {
-        if ( node.type == 'Literal' ) {
+        if ( node.type === 'Literal' ) {
             defaults.push( compile( node ) );
-        } else if ( node.type == 'ExpressionStatement' &&
-            node.expression.type == 'LogicalExpression' && node.expression.operator == '||' ) {
+        } else if ( node.type === 'ExpressionStatement' &&
+            node.expression.type === 'LogicalExpression' && node.expression.operator === '||' ) {
+
             // Add as default right side of "||" expression if there are no variables.
             // In this example, when will render div,
             //
@@ -145,7 +148,7 @@ export function compileToExpression( figure, node, compile ) {
             //
             // it set class attribute fo 'default'.
 
-            if ( collectVariables( figure.getScope(), node.expression.right ) == 0 ) {
+            if ( collectVariables( figure.getScope(), node.expression.right ) === 0 ) {
                 defaults.push( compile( node.expression.right ) );
             }
         }
@@ -153,7 +156,7 @@ export function compileToExpression( figure, node, compile ) {
 
     if ( !node.body ) {
         expr = null;
-    } else if ( node.body.length == 1 ) {
+    } else if ( node.body.length === 1 ) {
 
         expr = extract( node.body[ 0 ] );
         pushDefaults( node.body[ 0 ] );
@@ -190,7 +193,7 @@ export function compileToExpression( figure, node, compile ) {
  * @returns {SourceNode}
  */
 function attr( loc, reference, attrName, value ) {
-    if ( plainAttributes.indexOf( attrName ) != -1 ) {
+    if ( plainAttributes.indexOf( attrName ) !== -1 ) {
         return sourceNode( loc, [ reference, '.', attrName, ' = ', value, ';' ] );
     } else {
         return sourceNode( loc,
@@ -205,7 +208,7 @@ function attr( loc, reference, attrName, value ) {
  * @returns {string}
  */
 function defaultAttrValue( attrName ) {
-    if ( booleanAttributes.indexOf( attrName ) != -1 ) {
+    if ( booleanAttributes.indexOf( attrName ) !== -1 ) {
         return 'true';
     } else {
         return '""';
@@ -218,7 +221,7 @@ function defaultAttrValue( attrName ) {
  * @returns {Object}
  */
 function extract( node ) {
-    if ( node.type == 'ExpressionStatement' ) {
+    if ( node.type === 'ExpressionStatement' ) {
         return node.expression;
     } else {
         return node;

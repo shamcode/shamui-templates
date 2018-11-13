@@ -23,9 +23,9 @@ export const SVGElements = (
 
 export default {
     Element: ( path ) => {
-        if ( HTMLElements.indexOf( path.node.name ) != -1 ) {
+        if ( HTMLElements.indexOf( path.node.name ) !== -1 ) {
             return html.Element( path );
-        } else if ( SVGElements.indexOf( path.node.name ) != -1 ) {
+        } else if ( SVGElements.indexOf( path.node.name ) !== -1 ) {
             return svg.Element( path );
         } else {
             return custom.Element( path );

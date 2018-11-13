@@ -5,11 +5,12 @@ export default {
     ExpressionStatement: ( { node, compile, figure } ) => {
         node.reference = 'text' + figure.uniqid();
 
-        let defaultValue = `''`;
+        let defaultValue = '\'\'';
 
-        if ( node.expression.type == 'LogicalExpression' && node.expression.operator == '||' ) {
+        if ( node.expression.type === 'LogicalExpression' && node.expression.operator === '||' ) {
+
             // Add as default right side of "||" expression if there are no variables.
-            if ( collectVariables( figure.getScope(), node.expression.right ) == 0 ) {
+            if ( collectVariables( figure.getScope(), node.expression.right ) === 0 ) {
                 defaultValue = compile( node.expression.right );
             }
         }
@@ -20,7 +21,7 @@ export default {
 
         let variables = collectVariables( figure.getScope(), node.expression );
 
-        if ( variables.length == 0 ) {
+        if ( variables.length === 0 ) {
             figure.construct(
                 sourceNode( node.loc,
                     [ node.reference, '.textContent = ', compile( node.expression ) ] )
@@ -28,7 +29,7 @@ export default {
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc,
-                    [ `      `, node.reference, '.textContent = ', compile( node.expression ) ] )
+                    [ '      ', node.reference, '.textContent = ', compile( node.expression ) ] )
             );
         }
 
@@ -36,11 +37,11 @@ export default {
     },
 
     FilterExpression: ( { node, figure, compile } ) => {
-        let prefix = ``;
+        let prefix = '';
 
         if ( !figure.isInScope( node.callee.name ) ) {
             figure.thisRef = true;
-            prefix = `_this.filters.`;
+            prefix = '_this.filters.';
         }
 
         let sn = sourceNode( node.loc, [ prefix, compile( node.callee ), '(' ] );
@@ -128,7 +129,11 @@ export default {
     },
 
     UnaryExpression: ( { node, compile } ) => {
-        if ( node.operator == 'delete' || node.operator == 'void' || node.operator == 'typeof' ) {
+        if (
+            node.operator === 'delete' ||
+            node.operator === 'void' ||
+            node.operator === 'typeof'
+        ) {
             return sourceNode( node.loc, [ node.operator, ' (', compile( node.argument ), ')' ] );
         } else {
             return sourceNode( node.loc, [ node.operator, '(', compile( node.argument ), ')' ] );
@@ -160,6 +165,7 @@ export default {
 
     ConditionalExpression: ( { node, compile } ) => {
         return sourceNode( node.loc,
+            // eslint-disable-next-line max-len
             [ '(', compile( node.test ), ') ? ', compile( node.consequent ), ' : ', compile( node.alternate ) ] );
     },
 
