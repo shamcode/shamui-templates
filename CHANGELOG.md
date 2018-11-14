@@ -1,3 +1,7 @@
+## master
+Add eslint
+Update dependencies
+
 ## 0.0.16
 Merge options with current state
 Update dependency

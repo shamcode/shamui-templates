@@ -34,3 +34,56 @@ it( 'should insert variable in attributes', async() => {
     expect( widget.nodes[ 0 ].value ).toEqual( 'Value' );
     expect( html ).toBe( '<input type="text">' );
 } );
+
+
+it( 'should properly work with text constants in text nodes', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`<p>foo {{ bar }} baz</p>`,
+        {
+            bar: 'bar'
+        }
+    );
+    expect( html ).toBe( '<p>foo bar baz</p>' );
+} );
+
+it( 'should properly work with text constants in attributes', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`<div class="foo {{ bar }} baz"></div>`,
+        {
+            bar: 'bar'
+        }
+    );
+    expect( html ).toBe( '<div class="foo bar baz"></div>' );
+} );
+
+
+it( 'should save value for variables in complex cases', async() => {
+    expect.assertions( 2 );
+    const { widget, html } = await renderWidget(
+        compile`<div class="{{ foo }} {{ bar }}"></div>`,
+        {
+            foo: 'first',
+            bar: 'second'
+        }
+    );
+    expect( html ).toBe( '<div class="first second"></div>' );
+    widget.update( {
+        foo: 'updated'
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div class="updated second"></div>' );
+} );
+
+
+it( 'should properly work with more then one node on topmost level', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+        <p>first</p>
+
+        <p>second</p>
+        `
+    );
+    expect( html ).toBe( '<p>first</p><p>second</p>' );
+} );

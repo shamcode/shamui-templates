@@ -40,60 +40,6 @@ describe( 'ShamUIView', function() {
         DI = window.DI;
     } );
 
-    it( 'should properly work with text constants in text nodes', function() {
-        const { view, rendered } = render( () => new TextNodeAround( '#root', 'text-node-around', {
-            bar: 'bar'
-        } ) );
-        expect( view ).toBeLike( '<p>foo bar baz</p>' );
-        expect( rendered ).toEqual( [
-            'text-node-around'
-        ] );
-    } );
-
-    it( 'should properly work with text constants in attributes', function() {
-        const { view, rendered } = render(
-            () => new AttributeVariableAround( '#root', 'attribute-variable-around', {
-                bar: 'bar'
-            } )
-        );
-        expect( view ).toBe( '<div class="foo bar baz"></div>' );
-        expect( rendered ).toEqual( [
-            'attribute-variable-around'
-        ] );
-    } );
-
-    it( 'should save value for variables in complex cases', function() {
-        const { rendered, view } = render(
-            () => new ComplexSpotWithTwoVariables( '#root', 'complex-spot-with-two-variables', {
-                foo: 'first',
-                bar: 'second'
-            } )
-        );
-        expect( view ).toBe( '<div class="first second"></div>' );
-        expect( rendered ).toEqual( [
-            'complex-spot-with-two-variables'
-        ] );
-
-        view.update( {
-            foo: 'updated'
-        } );
-
-        expect( view ).toBe( '<div class="updated second"></div>' );
-        expect( rendered ).toEqual( [
-            'complex-spot-with-two-variables'
-        ] );
-    } );
-
-    it( 'should properly work with more then one node on topmost level', function() {
-        const { view, rendered } = render(
-            () => new TwoTopLevelNodes( '#root', 'two-top-level-nodes' )
-        );
-        expect( view ).toBe( '<p>first</p><p>second</p>' );
-        expect( rendered ).toEqual( [
-            'two-top-level-nodes'
-        ] );
-    } );
-
     it( 'should optimize "if"/"for" tag, if it is only child', function() {
         const { view, rendered } = render( () => new CommonIf( '#root', 'common-if', {
             a: true,
