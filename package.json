@@ -39,8 +39,10 @@
         "testPathIgnorePatterns": [
           "<rootDir>/node_modules/",
           "<rootDir>/__tests__/helpers.js",
+          "<rootDir>/__tests__/setup-jest.js",
           "<rootDir>/spec/"
         ],
+        "setupTestFrameworkScriptFile": "<rootDir>/__tests__/setup-jest.js",
         "testURL": "http://sham-ui.example.com"
       },
       {

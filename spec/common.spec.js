@@ -40,29 +40,6 @@ describe( 'ShamUIView', function() {
         DI = window.DI;
     } );
 
-    it( 'should optimize "if"/"for" tag, if it is only child', function() {
-        const { view, rendered } = render( () => new CommonIf( '#root', 'common-if', {
-            a: true,
-            b: [ 1 ]
-        } ) );
-        expect( view ).toBe( '<div><p>a</p><p>b</p></div>' );
-        expect( rendered ).toEqual( [
-            'CommonIf_if0',
-            'CommonIf_for2',
-            'common-if'
-        ] );
-    } );
-
-    it( 'should place placeholders for multiply "if" tags', function() {
-        const { view, rendered } = render(
-            () => new CommonIfWithPlaceholders( '#root', 'common-if-with-placeholders' )
-        );
-        expect( view ).toBe( '<div><!--if--><!--if--></div>' );
-        expect( rendered ).toEqual( [
-            'common-if-with-placeholders'
-        ] );
-    } );
-
     it( 'should place placeholders for multiply "if" and "for" tags', function() {
         const { view, rendered } = render(
             () => new CommonInFor( '#root', 'common-in-for' )

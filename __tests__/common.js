@@ -87,3 +87,38 @@ it( 'should properly work with more then one node on topmost level', async() => 
     );
     expect( html ).toBe( '<p>first</p><p>second</p>' );
 } );
+
+it( 'should optimize "if"/"for" tag, if it is only child', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+        <div>
+            <p>
+                {% if a %}a{% endif %}
+            </p>
+
+            <p>
+                {% for b %}b{% endfor %}
+            </p>
+        </div>
+        `,
+        {
+            a: true,
+            b: [ 1 ]
+        }
+    );
+    expect( html ).toBe( '<div><p>a</p><p>b</p></div>' );
+} );
+
+it( 'should place placeholders for multiply "if" tags', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+        <div>
+            {% if a %}a{% endif %}
+            {% if b %}b{% endif %}
+        </div>
+        `
+    );
+    expect( html ).toBe( '<div><!--if--><!--if--></div>' );
+} );
