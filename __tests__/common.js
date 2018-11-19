@@ -122,3 +122,57 @@ it( 'should place placeholders for multiply "if" tags', async() => {
     );
     expect( html ).toBe( '<div><!--if--><!--if--></div>' );
 } );
+
+it( 'should place placeholders for multiply "if" and "for" tags', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+        <div>
+            {% if a %}a{% endif %}
+            {% for b %}i{% endfor %}
+        </div>
+        `
+    );
+    expect( html ).toBe( '<div><!--if--><!--for--></div>' );
+} );
+
+
+it( 'should properly for with filters', async() => {
+    expect.assertions( 1 );
+    const filters = {
+        append: function( value, text ) {
+            return value + text;
+        },
+        upperCase: function( value ) {
+            return value.toUpperCase();
+        }
+    };
+    const { html } = await renderWidget(
+        compile`<p>{{ text | append('case') | upperCase }}</p>`,
+        { filters, text: 'upper_' }
+    );
+    expect( html ).toBe( '<p>UPPER_CASE</p>' );
+} );
+
+
+it( 'should work with expressions', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`
+        <a title="{{ (a + b) * c / d }}">{{ more.amazing + features[0] + features[1] }}</a>
+        `,
+        {
+            a: 1,
+            b: 2,
+            c: 100,
+            d: 2,
+            more: {
+                amazing: 'a'
+            },
+            features: [ 'b', 'c' ]
+        }
+    );
+    expect( html ).toBe( '<a title="150">abc</a>' );
+    widget.update( { more: { amazing: 'Amazing!' } } );
+    expect( widget.container.innerHTML ).toBe( '<a title="150">Amazing!bc</a>' );
+} );

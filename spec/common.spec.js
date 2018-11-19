@@ -40,60 +40,6 @@ describe( 'ShamUIView', function() {
         DI = window.DI;
     } );
 
-    it( 'should place placeholders for multiply "if" and "for" tags', function() {
-        const { view, rendered } = render(
-            () => new CommonInFor( '#root', 'common-in-for' )
-        );
-        expect( view ).toBe( '<div><!--if--><!--for--></div>' );
-        expect( rendered ).toEqual( [
-            'common-in-for'
-        ] );
-    } );
-
-    it( 'should properly for with filters', function() {
-        const filters = {
-            append: function( value, text ) {
-                return value + text;
-            },
-            upperCase: function( value ) {
-                return value.toUpperCase();
-            }
-        };
-
-        const { view, rendered } = render(
-            () => new CommonFilters( '#root', 'common-filters', { filters, text: 'upper_' } )
-        );
-
-        expect( view ).toBe( '<p>UPPER_CASE</p>' );
-        expect( rendered ).toEqual( [
-            'common-filters'
-        ] );
-    } );
-
-    it( 'should work with expressions', function() {
-        const { view, rendered } = render( () => new CommonExpressions( '#root', 'common-expressions', {
-            a: 1,
-            b: 2,
-            c: 100,
-            d: 2,
-            more: {
-                amazing: 'a'
-            },
-            features: [ 'b', 'c' ]
-        } ) );
-        expect( view ).toBe( '<a title="150">abc</a>' );
-        expect( rendered ).toEqual( [
-            'common-expressions'
-        ] );
-
-        view.update( { more: { amazing: 'Amazing!' } } );
-
-        expect( view ).toBe( '<a title="150">Amazing!bc</a>' );
-        expect( rendered ).toEqual( [
-            'common-expressions'
-        ] );
-    } );
-
     it( 'should render empty attributes', function() {
         const { view, rendered } = render( () => new EmptyAttr( '#root', 'empty-attr' ) );
 
