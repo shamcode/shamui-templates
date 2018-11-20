@@ -176,3 +176,102 @@ it( 'should work with expressions', async() => {
     widget.update( { more: { amazing: 'Amazing!' } } );
     expect( widget.container.innerHTML ).toBe( '<a title="150">Amazing!bc</a>' );
 } );
+
+it( 'should render empty attributes', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`<input type="checkbox" value="" checked>`
+    );
+    expect( html ).toBe( '<input type="checkbox" value="">' );
+    expect( widget.nodes[ 0 ].checked ).toEqual( true );
+} );
+
+it( 'should render attributes without quotes', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`<div class={{ name }}></div>`,
+        {
+            name: 'name'
+        }
+    );
+    expect( html ).toBe( '<div class="name"></div>' );
+} );
+
+it( 'should work querySelector', async() => {
+    expect.assertions( 3 );
+    const { widget } = await renderWidget(
+        compile`
+            <div id="one" class="foo"></div>
+            <div id="two" class="boo">
+                <div id="three" class="baz"></div>
+            </div>
+        `
+    );
+    expect( widget.querySelector( '.foo' ).getAttribute( 'id' ) ).toEqual( 'one' );
+    expect( widget.querySelector( '.boo' ).getAttribute( 'id' ) ).toEqual( 'two' );
+    expect( widget.querySelector( '.baz' ).getAttribute( 'id' ) ).toEqual( 'three' );
+} );
+
+it( 'should support global variables', async() => {
+    expect.assertions( 2 );
+    const first = await renderWidget(
+        compile`
+        <i>
+            {{ host == window.location.host ? 'expr' : '' }},
+            {% if host == window.location.host %}if{% endif %},
+            {% for i of [host == window.location.host] %}{{ i ? 'for' : '' }}{% endfor %},
+            <i class="{{ host == window.location.host ? 'attr' : '' }}"></i>,
+            <GlobalsCustom host={{ host == window.location.host }}>
+                {{ host ? 'custom' : '' }}
+            </GlobalsCustom>
+        </i>
+        `,
+        {
+            host: window.location.host
+        }
+    );
+    expect( first.html ).toBe(
+        '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i>, custom<!--GlobalsCustom--></i>'
+    );
+
+    const second = await renderWidget(
+        compile`
+            {{ Array.isArray(array) ? 'array' : '' }},
+            {{ Math.pow(2, 2) }},
+            {{ Object.keys(obj).join(';') }},
+            {{ JSON.stringify(obj) }}
+        `,
+        {
+            array: [ 1, 2, 3 ],
+            obj: { a: 1, b: 2 }
+        }
+    );
+    expect( second.html ).toBe( 'array, 4, a;b, {"a":1,"b":2}' );
+} );
+
+it( 'should support expressions without variables', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`{{ 1 + 2 * 3 }}`
+    );
+    expect( html ).toBe( '7' );
+} );
+
+it( 'should ignore all html comments', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+            <!-- comment with <tags> and {{ expr }}, {% tags %}, --, #, //, >. (c). -->
+            <span>Moon</span>
+        `
+    );
+    expect( html ).toBe( '<span>Moon</span>' );
+} );
+
+it( 'should replace HTML entities with Unicode symbols', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`&quot;&amp;&apos;&lt;&gt;&copy;&pound;&plusmn;&para;&ensp;&mdash;&emsp;&euro;&thinsp;&hearts;&notExists;`
+    );
+    expect( html ).toBe( '"&amp;\'&lt;&gt;©£±¶ — € ♥&amp;notExists;' );
+} );
