@@ -1,24 +1,3 @@
-<Loop>
-    <ul>
-        {% for key, value of list %}
-            <li>{{ key }}:{{ value }}</li>
-        {% endfor %}
-    </ul>
-</Loop>
-<LoopA>
-    <div>
-        {% for value of list %}
-            <p>{{ value }}{{ ext }}</p>
-        {% endfor %}
-    </div>
-</LoopA>
-<LoopObject>
-    <div>
-        {% for key, value of obj %}
-            {{ key }}: {{ value }};
-        {% endfor %}
-    </div>
-</LoopObject>
 <LoopObjectWithoutOptions>
     <div>
         {% for obj %}
