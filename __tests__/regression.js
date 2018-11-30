@@ -1,4 +1,9 @@
+import { DI } from 'sham-ui';
 import { compile, renderWidget } from './helpers';
+
+afterEach( () => {
+    DI.bind( 'logger', console );
+} );
 
 it( 'should update all values', async() => {
     expect.assertions( 6 );
@@ -49,5 +54,96 @@ it( 'should update all values', async() => {
     RegressionParentValuesComplex.widget.update( { a: 2, b: 2 } );
     expect( RegressionParentValuesComplex.widget.container.innerHTML ).toBe(
         '<p>4</p><p>0</p><p>44</p>'
+    );
+} );
+
+it( 'should update variables in nested views', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <p>
+                {% for i of each %}
+                    {% if on %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+            </p>
+        `,
+        {
+            value: 1,
+            on: true,
+            each: [ 1, 2, 3 ]
+        }
+    );
+    expect( html ).toBe( '<p>1<!--if-->1<!--if-->1<!--if--></p>' );
+
+    widget.update( { value: 7 } );
+    expect( widget.container.innerHTML ).toBe( '<p>7<!--if-->7<!--if-->7<!--if--></p>' );
+} );
+
+it( 'should work with first level non-elements', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+            text
+            {% if cond %}
+                <div class="if">ok</div>
+            {% endif %}
+            {% for loop %}
+                <div class="for">ok</div>
+            {% endfor %}
+            <first-level-tag on="{{ tag }}">
+                <div class="custom">ok</div>
+            </first-level-tag>
+            {% unsafe "<i class='unsafe'>" + xss + "</i>" %}
+        `,
+        {
+            cond: true,
+            loop: [ 1, 2, 3 ],
+            tag: true,
+            xss: 'ok'
+        }
+    );
+    expect( html ).toBe(
+        //eslint-disable-next-line max-len
+        'text <div class="if">ok</div><!--if--><div class="for">ok</div><div class="for">ok</div><div class="for">ok</div><!--for--><div class="custom">ok</div><!--first-level-tag--><i class="unsafe">ok</i><!--unsafe-->'
+    );
+} );
+
+//eslint-disable-next-line max-len
+it( 'should throw exception if user try to use querySelector on first level non-elements', async() => {
+    expect.assertions( 3 );
+    const loggerMock = {
+        error: jest.fn()
+    };
+    DI.bind( 'logger', loggerMock );
+
+    const { widget } = await renderWidget(
+        compile`
+            text
+            {% if cond %}
+                <div class="if">ok</div>
+            {% endif %}
+            {% for loop %}
+                <div class="for">ok</div>
+            {% endfor %}
+            <first-level-tag on="{{ tag }}">
+                <div class="custom">ok</div>
+            </first-level-tag>
+            {% unsafe "<i class='unsafe'>" + xss + "</i>" %}
+        `,
+        {
+            cond: true,
+            loop: [ 1, 2, 3 ],
+            tag: true,
+            xss: 'ok'
+        }
+    );
+    widget.querySelector( '.if' );
+
+    expect( loggerMock.error.mock.calls ).toHaveLength( 4 );
+    expect( loggerMock.error.mock.calls[ 0 ] ).toHaveLength( 2 );
+    expect( loggerMock.error.mock.calls[ 0 ][ 0 ].message ).toBe(
+        'sham-ui: Can not use querySelector with non-element nodes on first level.'
     );
 } );

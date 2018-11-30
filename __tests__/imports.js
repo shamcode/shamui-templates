@@ -11,7 +11,6 @@ afterEach( () => {
     delete window.require;
 } );
 
-
 it( 'should require and mount template', async() => {
     expect.assertions( 1 );
     const { html } = await renderWidget(
