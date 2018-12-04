@@ -1,8 +1,18 @@
 import { DI } from 'sham-ui';
 import { compile, renderWidget } from './helpers';
 
+beforeEach( () => {
+    window.Tag = compile`
+        <div> Custom tag </div>
+    `;
+} );
 afterEach( () => {
     DI.bind( 'logger', console );
+    delete window.Tag;
+} );
+
+afterAll( () => {
+    document.body.innerHTML = '';
 } );
 
 it( 'should update all values', async() => {
@@ -80,6 +90,55 @@ it( 'should update variables in nested views', async() => {
     widget.update( { value: 7 } );
     expect( widget.container.innerHTML ).toBe( '<p>7<!--if-->7<!--if-->7<!--if--></p>' );
 } );
+
+it( 'if with custom tag', async() => {
+    expect.assertions( 3 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <div>
+                {% if test %}
+                    <Tag/>
+                {% endif %}
+            </div>
+        `,
+        {
+            test: true
+        }
+    );
+    expect( html ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
+
+    widget.update( { test: false } );
+    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+
+    widget.update( { test: true } );
+    expect( widget.container.innerHTML ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
+} );
+
+it( 'if with unsafe tag', async() => {
+    expect.assertions( 3 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <div>
+                {% if test %}
+                    <div>
+                        {% unsafe "<i>unsafe</i>" %}
+                    </div>
+                {% endif %}
+            </div>
+        `,
+        {
+            test: true
+        }
+    );
+    expect( html ).toBe( '<div><div><i>unsafe</i></div></div>' );
+
+    widget.update( { test: false } );
+    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+
+    widget.update( { test: true } );
+    expect( widget.container.innerHTML ).toBe( '<div><div><i>unsafe</i></div></div>' );
+} );
+
 
 it( 'should work with first level non-elements', async() => {
     expect.assertions( 1 );

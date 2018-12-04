@@ -40,59 +40,6 @@ describe( 'Regression', function() {
         DI = window.DI;
     } );
 
-
-    it( 'if with custom tag', function() {
-        const { view, rendered } = render( () => new ReIfCustom( '#root', 're-if-custom', { test: true } ) );
-        expect( view ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
-        expect( rendered ).toEqual( [
-            'Tag',
-            'ReIfCustom_if0',
-            're-if-custom'
-        ] );
-
-        view.update( { test: false } );
-        expect( view ).toBe( '<div></div>' );
-        expect( rendered ).toEqual( [
-            'Tag',
-            'ReIfCustom_if0',
-            're-if-custom'
-        ] );
-
-        view.update( { test: true } );
-        expect( view ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
-        expect( rendered ).toEqual( [
-            'Tag',
-            'ReIfCustom_if0',
-            're-if-custom',
-            'Tag',
-            'ReIfCustom_if0'
-        ] );
-    } );
-
-    it( 'if with unsafe tag', function() {
-        const { view, rendered } = render( () => new ReIfUnsafe( '#root', 're-if-unsafe', { test: true } ) );
-        expect( view ).toBe( '<div><div><i>unsafe</i></div></div>' );
-        expect( rendered ).toEqual( [
-            'ReIfUnsafe_if0',
-            're-if-unsafe'
-        ] );
-
-        view.update( { test: false } );
-        expect( view ).toBe( '<div></div>' );
-        expect( rendered ).toEqual( [
-            'ReIfUnsafe_if0',
-            're-if-unsafe'
-        ] );
-
-        view.update( { test: true } );
-        expect( view ).toBe( '<div><div><i>unsafe</i></div></div>' );
-        expect( rendered ).toEqual( [
-            'ReIfUnsafe_if0',
-            're-if-unsafe',
-            'ReIfUnsafe_if0'
-        ] );
-    } );
-
     it( 'if with custom tag', function() {
         const { view, rendered } = render( () => new ReForCustom( '#root', 're-for-custom', { array: [ 1, 2, 3 ] } ) );
         expect( view ).toBe(
