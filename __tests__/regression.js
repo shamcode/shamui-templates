@@ -5,10 +5,18 @@ beforeEach( () => {
     window.Tag = compile`
         <div> Custom tag </div>
     `;
+    window[ 'custom_tag_with_loop' ] = compile`
+        <em>
+            {% for item of list %}
+                <b class="{{ foo }}{{ bar }}">{{ item }}</b>
+            {% endfor %}
+        </em>
+    `;
 } );
 afterEach( () => {
     DI.bind( 'logger', console );
     delete window.Tag;
+    delete window[ 'custom_tag_with_loop' ];
 } );
 
 afterAll( () => {
@@ -139,6 +147,77 @@ it( 'if with unsafe tag', async() => {
     expect( widget.container.innerHTML ).toBe( '<div><div><i>unsafe</i></div></div>' );
 } );
 
+it( 'for with custom tag', async() => {
+    expect.assertions( 3 );
+    const { widget, html } = await renderWidget(
+        compile`
+            <div>
+                {% for array %}
+                    <Tag/>
+                {% endfor %}
+            </div>
+        `,
+        {
+            array: [ 1, 2, 3 ]
+        }
+    );
+    expect( html ).toBe(
+        //eslint-disable-next-line max-len
+        '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
+    );
+
+    widget.update( { array: [] } );
+    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+
+    widget.update( { array: [ 1, 3 ] } );
+    expect( widget.container.innerHTML ).toBe(
+        '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
+    );
+} );
+
+it( 'update loops in custom tags', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+            <i>
+                <custom-tag-with-loop list={{ list }} foo={{ foo }} bar={{ bar }}/>
+            </i>
+        `,
+        {
+            foo: 'foo',
+            bar: 'bar',
+            list: [ 1, 2, 3 ]
+        }
+    );
+    expect( html ).toBe(
+        '<i><em><b class="foobar">1</b><b class="foobar">2</b><b class="foobar">3</b></em></i>'
+    );
+} );
+
+it( 'should not update variables what exists only in inner scope', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compile`
+            <p>
+                {% if list %}
+                    {% for t1 of list %}
+                        {% for value of t1 %}
+                            <i>{{ value }}</i>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+        `,
+        {
+            list: [ [ 1 ], [ 2 ], [ 3 ] ],
+            t1: 'bug?'
+        }
+    );
+
+    expect( html ).toBe(
+        '<p><i>1</i><!--for--><i>2</i><!--for--><i>3</i><!--for--><!--for--></p>'
+    );
+} );
 
 it( 'should work with first level non-elements', async() => {
     expect.assertions( 1 );
