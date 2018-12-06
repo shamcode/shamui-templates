@@ -219,6 +219,160 @@ it( 'should not update variables what exists only in inner scope', async() => {
     );
 } );
 
+it( 'should cache options variable data for loops', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <ul>
+                {% for code, item of currencies %}
+                    {% if code == currency %}
+                        <li class="selected">
+                            <span>{{ code }}</span>{{ ': ' + item.name }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <span>{{ code }}</span>{{ ': ' + item.name }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        `,
+        {
+            'currency': 'USD',
+            'locale': 'en',
+            'currencies': {
+                'USD': { 'name': 'US dollar' },
+                'EUR': { 'name': 'Euro' },
+                'AUD': { 'name': 'Australian dollar' }
+            }
+        }
+    );
+
+    expect( html ).toBe(
+        //eslint-disable-next-line max-len
+        '<ul><li class="selected"><span>USD</span>: US dollar</li><!--if--><li><span>EUR</span>: Euro</li><!--if--><li><span>AUD</span>: Australian dollar</li><!--if--></ul>'
+    );
+
+    const data2 = {
+        'currency': 'AUD',
+        'locale': 'en',
+        'currencies': {
+            'USD': { 'name': 'US dollar' },
+            'EUR': { 'name': 'Euro' },
+            'AUD': { 'name': 'Australian dollar' }
+        }
+    };
+
+    widget.update( data2 );
+    expect( widget.container.innerHTML ).toBe(
+        //eslint-disable-next-line max-len
+        '<ul><li><span>USD</span>: US dollar</li><!--if--><li><span>EUR</span>: Euro</li><!--if--><li class="selected"><span>AUD</span>: Australian dollar</li><!--if--></ul>'
+    );
+} );
+
+it( 'loos should update two levels loops once', async() => {
+    expect.assertions( 2 );
+    const data = {
+        colors: [
+            {
+                colors: [
+                    { color: 'red' },
+                    { color: 'green' },
+                    { color: 'blue' }
+                ]
+            },
+            {
+                colors: [
+                    { color: 'red' },
+                    { color: 'green' },
+                    { color: 'blue' }
+                ]
+            }
+        ],
+        color: { color: 'black' }
+    };
+
+    const ReLoopMustNotMutateData = await renderWidget(
+        compile`
+            <ol>
+                {% for sub of colors %}
+                    {% for color of sub.colors %}
+                        <li>
+                            {{ color.color }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            </ol>
+        `,
+        data
+    );
+    expect( ReLoopMustNotMutateData.html ).toBe(
+        //eslint-disable-next-line max-len
+        '<ol><li>red</li><li>green</li><li>blue</li><!--for--><li>red</li><li>green</li><li>blue</li><!--for--></ol>'
+    );
+
+    const ReLoopMustWorkWithSameNameLoops = await renderWidget(
+        compile`
+            <ol>
+                {% for colors %}
+                    {% for colors %}
+                        <li>
+                            {{ color }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            </ol>
+        `,
+        data
+    );
+    expect( ReLoopMustWorkWithSameNameLoops.html ).toBe(
+        //eslint-disable-next-line max-len
+        '<ol><li>red</li><li>green</li><li>blue</li><!--for--><li>red</li><li>green</li><li>blue</li><!--for--></ol>'
+    );
+} );
+
+it( 'loops with cond and outer scope', async() => {
+    expect.assertions( 2 );
+    const { widget, html } = await renderWidget(
+        compile`
+            <div>
+                {% for attr of attributes %}
+                    <span>{{attr.name}}</span>
+                    <span>{{attr.value}}</span>
+                    {% if attr %}
+                        <span>{{outer}}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        `,
+        {
+            outer: 'outer',
+            attributes: [
+                {
+                    name: 'name1',
+                    value: 'value1'
+                },
+                {
+                    name: 'name2',
+                    value: 'value2'
+                }
+            ]
+        }
+    );
+    expect( html ).toBe(
+        //eslint-disable-next-line max-len
+        '<div><span>name1</span><span>value1</span><span>outer</span><!--if--><span>name2</span><span>value2</span><span>outer</span><!--if--></div>'
+    );
+    widget.update( {
+        outer: 'outer2'
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        //eslint-disable-next-line max-len
+        '<div><span>name1</span><span>value1</span><span>outer2</span><!--if--><span>name2</span><span>value2</span><span>outer2</span><!--if--></div>'
+    );
+} );
+
+
 it( 'should work with first level non-elements', async() => {
     expect.assertions( 1 );
     const { html } = await renderWidget(
