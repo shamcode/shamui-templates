@@ -40,62 +40,6 @@ describe( 'Spread attributes', function() {
         DI = window.DI;
     } );
 
-    it( 'should work for html elements', function() {
-        const { view, rendered } = render( () => new SpreadElementAttributes( '#root', 'spread-element-attributes', {
-            attr: {
-                id: 'id',
-                'data-attr': 'data',
-                'class': 'foo'
-            }
-        } ) );
-        expect( view ).toBe( '<div id="id" data-attr="data" class="foo"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-element-attributes'
-        ] );
-    } );
-
-    it( 'should override default attributes', function() {
-        const { view, rendered } = render( () => new SpreadAttributesOverride( '#root', 'spread-attributes-override' ) );
-        expect( view ).toBe( '<div id="foo"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-attributes-override'
-        ] );
-
-        view.update( {
-            attr: {
-                id: 'boo'
-            }
-        } );
-        expect( view ).toBe( '<div id="boo"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-attributes-override'
-        ] );
-    } );
-
-    it( 'should override variables attributes', function() {
-        const { view, rendered } = render( () => new SpreadAttributesWithVar( '#root', 'spread-attributes-with-var', { id: "foo" } ) );
-        expect( view ).toBe( '<div id="foo"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-attributes-with-var'
-        ] );
-
-        view.update( {
-            attr: {
-                id: 'boo'
-            }
-        } );
-        expect( view ).toBe( '<div id="boo"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-attributes-with-var'
-        ] );
-
-        view.resetAndUpdate( { id: "bar" } );
-        expect( view ).toBe( '<div id="bar"></div>' );
-        expect( rendered ).toEqual( [
-            'spread-attributes-with-var'
-        ] );
-    } );
-
     it( 'should work for custom tags', function() {
         const { view, rendered } = render( () => new SpreadCustomAttributes( '#root', 'spread-custom-attributes', {
             attr: {
