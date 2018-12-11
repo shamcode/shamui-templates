@@ -1,5 +1,17 @@
 import { compile, renderWidget } from './helpers';
 
+beforeEach( () => {
+    window.SpreadCustom = compile`
+        <i>{{ foo }}</i>
+        <i>{{ boo }}</i>
+        <i>{{ bar }}</i>
+    `;
+} );
+
+afterEach( () => {
+    delete window.SpreadCustom;
+} );
+
 it( 'should render arrays', async() => {
     expect.assertions( 3 );
     const { html, widget } = await renderWidget(
@@ -78,4 +90,90 @@ it( 'should override variables attributes', async() => {
 
     widget.update( { id: 'bar', attr: {} } );
     expect( widget.container.innerHTML ).toBe( '<div id="bar"></div>' );
+} );
+
+it( 'should work for custom tags', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <div>
+                <SpreadCustom {{...attr}}/>
+            </div>
+        `,
+        {
+            attr: {
+                foo: 'foo',
+                boo: 'boo',
+                bar: 'bar'
+            }
+        }
+    );
+    expect( html ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
+
+    widget.update( {
+        attr: {
+            boo: 'Boo-Ya'
+        }
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i>foo</i><i>Boo-Ya</i><i>bar</i></div>' );
+} );
+
+it( 'should work for custom tags with constant attributes values', async() => {
+    expect.assertions( 3 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <div>
+                <SpreadCustom {{...attr}} foo="foo"/>
+            </div>
+        `
+    );
+    expect( html ).toBe( '<div><i>foo</i><i></i><i></i></div>' );
+
+    widget.update( {
+        attr: {
+            boo: 'boo',
+            bar: 'bar'
+        }
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
+
+    widget.update( {
+        attr: {
+            foo: 'over foo'
+        }
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i>over foo</i><i>boo</i><i>bar</i></div>' );
+} );
+
+it( 'should work for custom tags with attributes with values', async() => {
+    expect.assertions( 4 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <div>
+                <SpreadCustom {{...attr}} foo="{{ foo }}"/>
+            </div>
+        `
+    );
+    expect( html ).toBe( '<div></div>' );
+
+    widget.update( {
+        attr: {
+            boo: 'boo',
+            bar: 'bar'
+        }
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i></i><i>boo</i><i>bar</i></div>' );
+
+    widget.update( {
+        foo: 'foo'
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
+
+    widget.update( {
+        attr: {
+            foo: 'over foo'
+        },
+        foo: 'for'
+    } );
+    expect( widget.container.innerHTML ).toBe( '<div><i>for</i><i>boo</i><i>bar</i></div>' );
 } );
