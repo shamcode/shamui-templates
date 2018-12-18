@@ -1,6 +1,8 @@
 ## master
-Add eslint
-Update dependencies
+* Add eslint
+* Update dependencies
+* Migrate tests to jest
+* [#4](https://github.com/sham-ui/sham-ui-templates/issues/4) Pass widget to directive constructor 
 
 ## 0.0.16
 Merge options with current state
