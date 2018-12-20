@@ -73,6 +73,19 @@ function ForStatementNode( expr, body, options, loc ) {
     this.loc = loc;
 }
 
+function DefBlockStatementNode( name, loc ) {
+    this.type = 'DefBlockStatement';
+    this.name = name;
+    this.loc = loc;
+}
+
+function UseBlockStatementNode( name, body, loc ) {
+    this.type = 'UseBlockStatement';
+    this.name = name;
+    this.body = body;
+    this.loc = loc;
+}
+
 function UnsafeStatementNode( html, loc ) {
     this.type = 'UnsafeStatement';
     this.html = html;
@@ -209,6 +222,8 @@ ast.ExpressionStatementNode = ExpressionStatementNode;
 ast.ImportStatementNode = ImportStatementNode;
 ast.IfStatementNode = IfStatementNode;
 ast.ForStatementNode = ForStatementNode;
+ast.DefBlockStatementNode = DefBlockStatementNode;
+ast.UseBlockStatementNode = UseBlockStatementNode;
 ast.UnsafeStatementNode = UnsafeStatementNode;
 ast.FilterExpressionNode = FilterExpressionNode;
 ast.ThisExpressionNode = ThisExpressionNode;

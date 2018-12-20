@@ -97,6 +97,9 @@ const visitors = {
             visit( node.body[ i ], visitor );
         }
     },
+    DefBlockStatement: ( node, visitor ) => {
+        handle( node, visitor );
+    },
     UnsafeStatement: ( node, visitor ) => {
         handle( node, visitor );
     },

@@ -99,6 +99,9 @@ AttributeText [^\"{]+
 <expr>"null"                       return "NULL";
 <expr>"this"                       return "THIS";
 <expr>"unsafe"                     return "UNSAFE";
+<expr>"defblock"                   return "DEFBLOCK"
+<expr>"block"                      return "BLOCK"
+<expr>"endblock"                   return "ENDBLOCK"
 <expr>{Identifier}                 return "IDENTIFIER";
 <expr>{DecimalLiteral}             return "NUMERIC_LITERAL";
 <expr>{HexIntegerLiteral}          return "NUMERIC_LITERAL";
@@ -252,6 +255,8 @@ Statement
     | ImportStatement
     | IfStatement
     | ForStatement
+    | DefBlockStatement
+    | UseBlockStatement
     | UnsafeStatement
     ;
 
@@ -299,6 +304,23 @@ ForStatement
         }
     ;
 
+DefBlockStatement
+    :  "{%" DEFBLOCK Expression "%}"
+        {
+            $$ = new DefBlockStatementNode($3, createSourceLocation(@1, @4));
+        }
+    | "{%" DEFBLOCK "%}"
+        {
+            $$ = new DefBlockStatementNode("default", createSourceLocation(@1, @3));
+        }
+    ;
+
+UseBlockStatement
+    :  "{%" BLOCK Expression "%}" ElementList "{%" ENDBLOCK "%}"
+        {
+            $$ = new BlockStatementNode($3, $5, createSourceLocation(@1, @8));
+        }
+    ;
 
 UnsafeStatement
     :  "{%" UNSAFE Expression "%}"
