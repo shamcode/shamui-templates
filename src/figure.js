@@ -19,6 +19,7 @@ export class Figure {
         this.scope = [];
         this.onUpdate = [];
         this.onRemove = [];
+        this.blocks = [];
         this.thisRef = false;
         this.stateNeed = false;
     }
@@ -129,6 +130,18 @@ export class Figure {
             '  // Set root nodes\n',
             '  this.nodes = [', sourceNode( this.children ).join( ', ' ), '];\n'
         ] );
+
+        if ( this.blocks.length > 0 ) {
+            sn.add( [
+                '\n',
+                '  // Blocks\n',
+                '  this.blocks = {\n',
+                '  ', sourceNode( this.blocks ).join( ',\n  ' ),
+                '\n',
+                '  };',
+                '\n'
+            ] );
+        }
 
         sn.add( '}\n' );
 
@@ -336,5 +349,9 @@ export class Figure {
 
     addDirective( node ) {
         this.directives.push( node );
+    }
+
+    addBlock( node ) {
+        this.blocks.push( node );
     }
 }

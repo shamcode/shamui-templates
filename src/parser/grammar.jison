@@ -305,13 +305,13 @@ ForStatement
     ;
 
 DefBlockStatement
-    :  "{%" DEFBLOCK Expression "%}"
+    :  "{%" DEFBLOCK StringLiteral "%}"
         {
             $$ = new DefBlockStatementNode($3, createSourceLocation(@1, @4));
         }
     | "{%" DEFBLOCK "%}"
         {
-            $$ = new DefBlockStatementNode("default", createSourceLocation(@1, @3));
+            $$ = new DefBlockStatementNode(new LiteralNode("'default'", createSourceLocation(@1, @3)), createSourceLocation(@1, @3));
         }
     ;
 
