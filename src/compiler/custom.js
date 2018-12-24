@@ -2,7 +2,6 @@ import { sourceNode } from './sourceNode';
 import { collectVariables } from './variable';
 import { isSingleChild, unique, notNull, getTemplateName } from '../utils';
 import { compileToExpression } from './attribute';
-import { Figure } from '../figure';
 
 export default {
     Element: ( { parent, node, figure, compile } ) => {
@@ -52,29 +51,27 @@ export default {
 
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {
-
-            figure.spot( variables ).add(
-                sourceNode( node.loc,
-                    `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data})`
-                )
-            );
-
+            const spot = figure.spot( variables );
+            node.addBlockMethod = spot.add.bind( spot );
         } else {
-
-            figure.addRenderActions(
-                sourceNode( node.loc,
-                    `    __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data});`
-                ) );
-
+            node.addBlockMethod = figure.addRenderActions.bind( figure );
         }
+
+        node.addBlockMethod(
+            sourceNode( node.loc,
+                `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data})`
+            )
+        );
 
         if ( node.body.length > 0 ) {
-            let subfigure = new Figure( templateName, figure );
-            subfigure.children = node.body.map( ( node ) => compile( node, subfigure ) )
+            node.childName = `${childName}.ref`;
+            figure.children = node.body
+                .map( ( child ) => compile( child, figure ) )
                 .filter( notNull );
-
-            figure.addFigure( subfigure );
+            delete node.childName;
         }
+
+        delete node.addBlockMethod;
 
         return node.reference;
     }

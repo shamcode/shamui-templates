@@ -220,10 +220,7 @@ it( 'should support global variables', async() => {
             {{ host == window.location.host ? 'expr' : '' }},
             {% if host == window.location.host %}if{% endif %},
             {% for i of [host == window.location.host] %}{{ i ? 'for' : '' }}{% endfor %},
-            <i class="{{ host == window.location.host ? 'attr' : '' }}"></i>,
-            <GlobalsCustom host={{ host == window.location.host }}>
-                {{ host ? 'custom' : '' }}
-            </GlobalsCustom>
+            <i class="{{ host == window.location.host ? 'attr' : '' }}"></i>
         </i>
         `,
         {
@@ -231,7 +228,7 @@ it( 'should support global variables', async() => {
         }
     );
     expect( first.html ).toBe(
-        '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i>, custom<!--GlobalsCustom--></i>'
+        '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i></i>'
     );
 
     const second = await renderWidget(

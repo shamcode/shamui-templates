@@ -37,20 +37,3 @@ it( 'should properly work with attributes', async() => {
         '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>updated</h1><div>content</div><!--CustomPanel--></div>'
     );
 } );
-
-it( 'should render inline', async() => {
-    expect.assertions( 1 );
-    const { html } = await renderWidget(
-        compile`
-            <div>
-                <custom-inline>
-                    <p>inline</p>
-                </custom-inline>
-                <custom-inline/>
-            </div>
-        `
-    );
-    expect( html ).toBe(
-        '<div><p>inline</p><!--custom-inline--><p>inline</p><!--custom-inline--></div>'
-    );
-} );

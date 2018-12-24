@@ -100,6 +100,13 @@ const visitors = {
     DefBlockStatement: ( node, visitor ) => {
         handle( node, visitor );
     },
+    UseBlockStatement: ( node, visitor ) => {
+        handle( node, visitor );
+
+        for ( let i = 0; i < node.body.length; i++ ) {
+            visit( node.body[ i ], visitor );
+        }
+    },
     UnsafeStatement: ( node, visitor ) => {
         handle( node, visitor );
     },

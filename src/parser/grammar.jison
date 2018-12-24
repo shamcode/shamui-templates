@@ -316,9 +316,9 @@ DefBlockStatement
     ;
 
 UseBlockStatement
-    :  "{%" BLOCK Expression "%}" ElementList "{%" ENDBLOCK "%}"
+    :  "{%" BLOCK StringLiteral "%}" ElementList "{%" ENDBLOCK "%}"
         {
-            $$ = new BlockStatementNode($3, $5, createSourceLocation(@1, @8));
+            $$ = new UseBlockStatementNode($3, $5, createSourceLocation(@1, @8));
         }
     ;
 

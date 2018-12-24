@@ -1,6 +1,7 @@
 import { parser } from './parser';
 import { compile } from './compiler';
 import { entity } from './transform/entity';
+import { defaultBlock } from './transform/defaultblock';
 import { whitespace } from './optimize/whitespace';
 import { getTemplateName } from './utils';
 import { drawGraph } from './graph';
@@ -10,7 +11,7 @@ export class Compiler {
         this.options = Object.assign( {
             asModule: true
         }, options );
-        this.transforms = [ whitespace, entity ];
+        this.transforms = [ whitespace, entity, defaultBlock ];
         this.globals = [
             'window',
             'Array',
