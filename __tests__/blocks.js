@@ -121,3 +121,44 @@ it( 'should work with widget default block', async() => {
         '<div><a href="http://foo.example.com"> Text for http://foo.example.com<!--default--></a></div>'
     );
 } );
+
+
+it( 'should remove block in if', async() => {
+    expect.assertions( 3 );
+    window.VisibleBlock = compile`
+        {% if visible %}
+            <div class="content">
+                {% defblock %}
+            </div>
+        {% endif %}
+    `;
+    const { html, widget } = await renderWidget(
+        compile`
+            <VisibleBlock visible={{visible}}>
+                Text content for {{data}}
+            </VisibleBlock>
+        `,
+        {
+            visible: true,
+            data: 'foo'
+        }
+    );
+    expect( html ).toBe(
+        '<div class="content"> Text content for foo<!--default--></div><!--if--><!--VisibleBlock-->'
+    );
+
+    widget.update( {
+        visible: false,
+        data: 'foz'
+    } );
+    expect( widget.container.innerHTML ).toBe( '<!--if--><!--VisibleBlock-->' );
+
+    widget.update( {
+        visible: true,
+        data: 'foo'
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        '<div class="content"> Text content for bar<!--default--></div><!--if--><!--VisibleBlock-->'
+    );
+    delete window.VisibleBlock;
+} );
