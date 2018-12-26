@@ -122,7 +122,6 @@ it( 'should work with widget default block', async() => {
     );
 } );
 
-
 it( 'should remove block in if', async() => {
     expect.assertions( 3 );
     window.VisibleBlock = compile`
@@ -158,7 +157,7 @@ it( 'should remove block in if', async() => {
         data: 'foo'
     } );
     expect( widget.container.innerHTML ).toBe(
-        '<div class="content"> Text content for bar<!--default--></div><!--if--><!--VisibleBlock-->'
+        '<div class="content"> Text content for foo<!--default--></div><!--if--><!--VisibleBlock-->'
     );
     delete window.VisibleBlock;
 } );

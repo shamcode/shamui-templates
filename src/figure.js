@@ -20,6 +20,7 @@ export class Figure {
         this.onUpdate = [];
         this.onRemove = [];
         this.blocks = [];
+        this.blocksNeed = false;
         this.thisRef = false;
         this.stateNeed = false;
     }
@@ -131,16 +132,24 @@ export class Figure {
             '  this.nodes = [', sourceNode( this.children ).join( ', ' ), '];\n'
         ] );
 
-        if ( this.blocks.length > 0 ) {
+        if ( this.blocksNeed ) {
             sn.add( [
                 '\n',
-                '  // Blocks\n',
-                '  this.blocks = {\n',
-                '  ', sourceNode( this.blocks ).join( ',\n  ' ),
-                '\n',
-                '  };',
-                '\n'
+                '  // Blocks\n'
             ] );
+            if ( 0 === this.blocks.length || null === this.parent ) {
+                sn.add( '  this.blocks = {};\n' );
+            } else {
+                sn.add( [
+                    '  this.blocks = ', this.getPathToDocument(), '.blocks;\n'
+                ] );
+            }
+            if ( this.blocks.length > 0 ) {
+                sn.add( [
+                    sourceNode( this.blocks ).join( '\n' ),
+                    '\n'
+                ] );
+            }
         }
 
         sn.add( '}\n' );
@@ -284,12 +293,19 @@ export class Figure {
         return needed;
     }
 
-
     root() {
         if ( this.parent ) {
             return this.parent.root();
         } else {
             return this;
+        }
+    }
+
+    getPathToDocument() {
+        if ( this.parent ) {
+            return this.parent.getPathToDocument() + '.parent';
+        } else {
+            return 'this';
         }
     }
 
@@ -337,10 +353,6 @@ export class Figure {
 
     addOnUpdate( node ) {
         this.onUpdate.push( node );
-    }
-
-    prependOnUpdate( node ) {
-        this.onUpdate.unshift( node );
     }
 
     addOnRemove( node ) {

@@ -4,3 +4,4 @@
 coverage/
 *.full.jison
 .idea
+debug
