@@ -161,3 +161,105 @@ it( 'should remove block in if', async() => {
     );
     delete window.VisibleBlock;
 } );
+
+it( 'should work with two nested if', async() => {
+    expect.assertions( 3 );
+    window.BigRedButton = compile`
+        {% if big %}
+            {% if red %} 
+                <button class="big red">This button big={{big}}, red={{red}}{% defblock %}</button>
+            {% endif %}
+        {% endif %}
+    `;
+    const { html, widget } = await renderWidget(
+        compile`
+            <BigRedButton big={{big}} red={{red}}>
+                big && red
+            </BigRedButton>
+        `,
+        {
+            big: false,
+            red: false
+        }
+    );
+    expect( html ).toBe( '<!--if--><!--BigRedButton-->' );
+
+    widget.update( {
+        big: true
+    } );
+    expect( widget.container.innerHTML ).toBe( '<!--if--><!--if--><!--BigRedButton-->' );
+
+    widget.update( {
+        red: true
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        // eslint-disable-next-line max-len
+        '<button class="big red">This button big=true, red=true big &amp;&amp; red <!--default--></button><!--if--><!--if--><!--BigRedButton-->'
+    );
+    delete window.BigRedButton;
+} );
+
+it( 'should work with defblock nested in useblock', async() => {
+    expect.assertions( 4 );
+    window.LoadedContainer = compile`
+        {% if loaded %}
+            {% defblock %}
+        {% endif %}
+    `;
+    window.LoadedVisibleContainer = compile`
+        <LoadedContainer loaded={{loaded}}>
+            {% if visible %}
+                {% defblock %}
+            {% endif %}
+        </LoadedContainer>
+    `;
+    window.RedLoadedVisibleContainer = compile`
+        <LoadedVisibleContainer loaded={{loaded}} visible={{visible}}>
+            {% if red %}
+                {% defblock %}            
+            {% endif %}
+        </LoadedVisibleContainer>
+    `;
+    const { html, widget } = await renderWidget(
+        compile`
+            <RedLoadedVisibleContainer loaded={{loaded}} visible={{visible}} red={{red}}>
+                red && loaded & visible
+            </RedLoadedVisibleContainer>
+        `,
+        {
+            red: false,
+            loaded: false,
+            visible: false
+        }
+    );
+    expect( html ).toBe(
+        // eslint-disable-next-line max-len
+        '<!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+    );
+
+    widget.update( {
+        loaded: true
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        // eslint-disable-next-line max-len
+        '<!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+    );
+
+    widget.update( {
+        visible: true
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        // eslint-disable-next-line max-len
+        '<!--if--><!--default--><!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+    );
+    widget.update( {
+        red: true
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        // eslint-disable-next-line max-len
+        ' red &amp;&amp; loaded &amp; visible <!--default--><!--if--><!--default--><!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+    );
+    delete window.LoadedContainer;
+    delete window.LoadedVisibleContainer;
+    delete window.RedLoadedVisibleContainer;
+} );
