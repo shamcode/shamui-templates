@@ -39,7 +39,7 @@ export default {
                 '      ',
                 node.otherwise ? 'result = ' : '',
                 `__UI__.cond(_this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                    node.cond ), ')'
+                    node.cond ), `, ${figure.getPathToDocument()})`
             ] )
         );
 
@@ -47,7 +47,7 @@ export default {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
                     '      ',
-                    `__UI__.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result)`
+                    `__UI__.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()})`
                 ] )
             ).declareVariable( 'result' );
         }

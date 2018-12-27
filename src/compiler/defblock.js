@@ -15,7 +15,7 @@ export default {
             sourceNode( [
                 `  this.blocks['${name}'] = {\n`,
                 `    node: ${placeholder},\n`,
-                '    owner: _this\n',
+                '    widget: _this\n',
                 '  };'
             ] )
         );

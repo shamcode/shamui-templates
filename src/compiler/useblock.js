@@ -38,7 +38,7 @@ export default {
             sourceNode( node.loc, [
                 `      var ${blockVar} = ${parent.childName}.blocks['${blockName}'];\n`,
                 `      if (${blockVar}) {\n`,
-                `        __UI__.insert(${blockVar}.owner, ${blockVar}.node, ${childName}, ${templateName}, {});\n`,
+                `        __UI__.insert(${blockVar}.widget, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument});\n`,
                 '      }'
             ] )
         );

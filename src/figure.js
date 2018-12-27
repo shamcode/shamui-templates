@@ -54,7 +54,7 @@ export class Figure {
         }
 
         if ( this.stateNeed ) {
-            sn.add( '  this.__state__ = {};\n' );
+            sn.add( '  this.__data__ = {};\n' );
         }
 
         if ( this.thisRef ) {
@@ -141,7 +141,7 @@ export class Figure {
                 sn.add( '  this.blocks = {};\n' );
             } else {
                 sn.add( [
-                    '  this.blocks = ', this.getPathToDocument(), '.blocks;\n'
+                    '  this.blocks = this.owner.blocks;\n'
                 ] );
             }
             if ( this.blocks.length > 0 ) {
@@ -197,7 +197,10 @@ export class Figure {
             `${this.name}.prototype.update = function (__currentData__) {\n`
         );
 
-        sn.add( '  var __data__ = Object.assign({}, this.options, __currentData__);\n' );
+        sn.add( [
+            '  var __data__ = Object.assign({}, this.options, __currentData__);\n',
+            '  this.__data__ = __data__;\n'
+        ] );
 
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
             .sort( ( a, b ) => a.length - b.length );
@@ -242,6 +245,7 @@ export class Figure {
 
         sn.add( [
             '  this.options = __data__;\n',
+            '  delete this.__data__;\n',
             '};\n'
         ] );
         return sn;
@@ -302,11 +306,7 @@ export class Figure {
     }
 
     getPathToDocument() {
-        if ( this.parent ) {
-            return this.parent.getPathToDocument() + '.parent';
-        } else {
-            return 'this';
-        }
+        return this.parent ? '_this.owner' : '_this';
     }
 
     getScope() {

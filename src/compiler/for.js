@@ -29,9 +29,11 @@ export default {
             sourceNode( node.loc, [
                 `      __UI__.loop(_this, ${placeholder}, ${childrenName}, ${templateName}, `,
                 compile( node.expr ),
+                ', ',
                 (
-                    node.options === null ? '' : [ ', ', esc( node.options ) ]
+                    node.options === null ? 'null' : esc( node.options )
                 ),
+                `, ${figure.getPathToDocument()}`,
                 ')'
             ] )
         );

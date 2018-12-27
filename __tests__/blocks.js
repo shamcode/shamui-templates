@@ -263,3 +263,56 @@ it( 'should work with defblock nested in useblock', async() => {
     delete window.LoadedVisibleContainer;
     delete window.RedLoadedVisibleContainer;
 } );
+
+it( 'should work with for', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`
+            <ul>
+                {% for url of links %}
+                    <li>
+                        <LinkTo url={{url}}>Text for {{url}}</LinkTo>
+                    </li>
+                {% endfor %}
+            </ul>
+            <LinkTo url="http://example.com">Home</LinkTo>
+        `,
+        {
+            links: [
+                'http://foo.example.com',
+                'http://bar.example.com',
+                'http://baz.example.com'
+            ]
+        }
+    );
+    expect( html ).toBe(
+        '<ul>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--default--></a></li>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--default--></a></li>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--default--></a></li>' +
+        '</ul>' +
+        '<a href="http://example.com">Home<!--default--></a><!--LinkTo-->'
+    );
+
+    widget.update( {
+        links: [
+            'http://baz.example.com',
+            'http://bar.example.com',
+            'http://foo.example.com'
+        ]
+    } );
+    expect( widget.container.innerHTML ).toBe(
+        '<ul>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--default--></a></li>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--default--></a></li>' +
+            // eslint-disable-next-line max-len
+            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--default--></a></li>' +
+        '</ul>' +
+        '<a href="http://example.com">Home<!--default--></a><!--LinkTo-->'
+    );
+} );

@@ -18,6 +18,7 @@ export default {
             figure.declare( sourceNode( `var ${placeholder} = document.createComment('${node.name}');` ) );
         }
 
+        figure.thisRef = true;
         figure.declare( sourceNode( `var ${childName} = {};` ) );
 
         let data = [];
@@ -26,10 +27,9 @@ export default {
         // Collect info about variables and attributes.
         for ( let attr of node.attributes ) {
             if ( attr.type === 'SpreadAttribute' ) {
-
                 figure.spot( attr.identifier.name ).add(
                     sourceNode( node.loc,
-                        `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${attr.identifier.name})`
+                        `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${attr.identifier.name}, ${figure.getPathToDocument()})`
                     )
                 );
 
@@ -47,7 +47,6 @@ export default {
         variables = unique( variables );
         data = `{${data.join( ', ' )}}`;
 
-        figure.thisRef = true;
 
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {
@@ -59,16 +58,18 @@ export default {
 
         node.addBlockMethod(
             sourceNode( node.loc,
-                `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data})`
+                `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()})`
             )
         );
 
         if ( node.body.length > 0 ) {
             node.childName = `${childName}.ref`;
+            node.pathToDocument = figure.getPathToDocument();
             figure.children = node.body
                 .map( ( child ) => compile( child, figure ) )
                 .filter( notNull );
             delete node.childName;
+            delete node.pathToDocument;
         }
 
         delete node.addBlockMethod;
