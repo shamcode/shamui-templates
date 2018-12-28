@@ -1,4 +1,5 @@
 ## master
+* [#5](https://github.com/sham-ui/sham-ui-templates/issues/5) Dynamic blocks
 * Add eslint
 * Update dependencies
 * Migrate tests to jest
