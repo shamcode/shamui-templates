@@ -1,7 +1,9 @@
 /src/
-/spec/
-.idea
+/__tests__/
+/coverage/
+/debug/
+/.idea/
 TODO.md
 README.md
 testem.json
-view.js
+.eslintrc.js

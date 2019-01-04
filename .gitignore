@@ -1,7 +1,6 @@
 /node_modules/
 /lib/
-/spec/views.js
-coverage/
+/coverage/
+/debug/
+/.idea/
 *.full.jison
-.idea
-debug
