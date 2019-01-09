@@ -1,3 +1,6 @@
+## 2.0.5
+* Fix override options in update
+
 ## 2.0.4
 * Fix lose options descriptors after update
 

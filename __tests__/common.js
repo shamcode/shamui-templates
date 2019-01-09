@@ -1,3 +1,4 @@
+import { options } from 'sham-ui';
 import { compile, renderWidget } from './helpers';
 
 it( 'should render simple DOM', async() => {
@@ -280,4 +281,22 @@ it( 'should don\'t lose options descriptors after update', async() => {
     );
     expect( html ).toBe( '<span>Dummy</span>' );
     expect( widget.options.types ).toEqual( [] );
+} );
+
+it( 'should override options', async() => {
+    expect.assertions( 4 );
+    class ExtendedDummy extends compile`<span>{{text}}</span>` {
+        @options get text() {
+            return 'Foo';
+        }
+    }
+    const { html, widget } = await renderWidget( ExtendedDummy );
+    expect( widget.options.text ).toBe( 'Foo' );
+
+    expect( html ).toBe( '<span>Foo</span>' );
+    widget.update( {
+        text: 'Bar'
+    } );
+    expect( widget.container.innerHTML ).toBe( '<span>Bar</span>' );
+    expect( widget.options.text ).toBe( 'Bar' );
 } );

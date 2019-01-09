@@ -244,7 +244,10 @@ export class Figure {
         }
 
         sn.add( [
-            '  Object.assign(this.options, __currentData__);\n',
+            '  if (__currentData__) {\n',
+            // eslint-disable-next-line max-len
+            '    Object.defineProperties(this.options, Object.getOwnPropertyDescriptors(__currentData__));\n',
+            '  }\n',
             '  delete this.__data__;\n',
             '};\n'
         ] );
