@@ -1,3 +1,6 @@
+## 2.0.6
+* Update `yarn.lock`
+
 ## 2.0.5
 * Fix override options in update
 
