@@ -244,7 +244,7 @@ export class Figure {
         }
 
         sn.add( [
-            '  this.options = __data__;\n',
+            '  Object.assign(this.options, __currentData__);\n',
             '  delete this.__data__;\n',
             '};\n'
         ] );

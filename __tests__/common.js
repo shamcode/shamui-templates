@@ -272,3 +272,12 @@ it( 'should replace HTML entities with Unicode symbols', async() => {
     );
     expect( html ).toBe( '"&amp;\'&lt;&gt;©£±¶ — € ♥&amp;notExists;' );
 } );
+
+it( 'should don\'t lose options descriptors after update', async() => {
+    expect.assertions( 2 );
+    const { html, widget } = await renderWidget(
+        compile`<span>Dummy</span>`
+    );
+    expect( html ).toBe( '<span>Dummy</span>' );
+    expect( widget.options.types ).toEqual( [] );
+} );
