@@ -1,3 +1,6 @@
+## 2.0.4
+* Fix lose options descriptors after update
+
 ## 2.0.3
 * Update `.npmignore`
 * [#5](https://github.com/sham-ui/sham-ui-templates/issues/5) Dynamic blocks
