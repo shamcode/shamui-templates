@@ -1,3 +1,7 @@
+## 2.0.7
+* Update dependencies
+* Pass owner to directive constructor
+
 ## 2.0.6
 * Update `yarn.lock`
 

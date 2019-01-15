@@ -22,7 +22,7 @@ export default {
         figure.addRenderActions(
             sourceNode( node.loc, [
                 `    if (${directive} === undefined) {\n`,
-                `      ${directive} = new _this.directives.${node.name}(_this.parent || _this);\n`,
+                `      ${directive} = new _this.directives.${node.name}(${figure.getPathToDocument()});\n`,
                 '    }\n',
                 `    ${directive}.bind(${parent.reference});`
             ] )
