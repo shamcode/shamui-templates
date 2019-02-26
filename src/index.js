@@ -9,7 +9,8 @@ import { drawGraph } from './graph';
 export class Compiler {
     constructor( options = {} ) {
         this.options = Object.assign( {
-            asModule: true
+            asModule: true,
+            asSingleFileWidget: false
         }, options );
         this.transforms = [ whitespace, entity, defaultBlock ];
         this.globals = [
@@ -27,10 +28,14 @@ export class Compiler {
         // Transform.
         this.transforms.forEach( transform => transform( ast ) );
 
-        return compile( getTemplateName( getBaseName( filename ) ),
+        return compile(
+            this.options.asSingleFileWidget ?
+                'Template' :
+                getTemplateName( getBaseName( filename ) ),
             ast,
             this.options,
-            this.globals );
+            this.globals
+        );
     }
 
     drawAstTree( filename, code ) {
