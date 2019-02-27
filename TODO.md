@@ -1,3 +1,3 @@
 # TODO
 
-* [ ] Analog for ember's `{{component}}`
+* Process `asSingleFileWidget` options (for processing `script` & `template` tags)
