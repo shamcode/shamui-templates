@@ -8,6 +8,7 @@ export class Figure {
         this.parent = parent;
         this.uniqCounters = {};
         this.children = [];
+        this.scriptCode = [];
         this.functions = {};
         this.imports = [];
         this.declarations = [];
@@ -164,6 +165,10 @@ export class Figure {
 
         for ( let subfigure of this.subFigures ) {
             sn.add( subfigure.generate() );
+        }
+
+        if ( this.scriptCode.length > 0 ) {
+            sn.add( this.scriptCode );
         }
 
         return sn;
@@ -368,5 +373,11 @@ export class Figure {
 
     addBlock( node ) {
         this.blocks.push( node );
+    }
+
+    addScriptCode( node ) {
+        node.body.forEach(
+            node => this.scriptCode.push( node.text )
+        );
     }
 }

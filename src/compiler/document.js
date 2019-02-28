@@ -10,6 +10,8 @@ export default {
                 figure.generate(), '\n',
                 `module.exports = ${figure.name};\n`
             ] );
+        } else if ( options.asSingleFileWidget ) {
+            return sourceNode( node.loc, [ figure.generate() ] );
         } else {
             return sourceNode( node.loc, [
                 figure.generate(), '\n',

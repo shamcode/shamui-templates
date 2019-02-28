@@ -1,6 +1,8 @@
 import html from './html';
 import svg from './svg';
 import custom from './custom';
+import { notNull } from '../utils';
+import { sourceNode } from './sourceNode';
 
 export const HTMLElements = (
     'a abbr address area article aside audio b base bdi bdo big blockquote body br ' +
@@ -24,6 +26,17 @@ export const SVGElements = (
 export default {
     Element: ( path ) => {
         if ( HTMLElements.indexOf( path.node.name ) !== -1 ) {
+            if ( path.options.asSingleFileWidget ) {
+                if ( 'script' === path.node.name ) {
+                    path.figure.addScriptCode( path.node );
+                    return null;
+                } else if ( 'template' === path.node.name ) {
+                    path.figure.children = path.node.body
+                        .map( ( child ) => path.compile( child ) )
+                        .filter( notNull );
+                    return null;
+                }
+            }
             return html.Element( path );
         } else if ( SVGElements.indexOf( path.node.name ) !== -1 ) {
             return svg.Element( path );
