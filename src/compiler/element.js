@@ -2,7 +2,6 @@ import html from './html';
 import svg from './svg';
 import custom from './custom';
 import { notNull } from '../utils';
-import { sourceNode } from './sourceNode';
 
 export const HTMLElements = (
     'a abbr address area article aside audio b base bdi bdo big blockquote body br ' +
