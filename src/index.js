@@ -2,6 +2,7 @@ import { parser } from './parser';
 import { compile } from './compiler';
 import { entity } from './transform/entity';
 import { defaultBlock } from './transform/defaultblock';
+import { sfw } from './transform/sfw';
 import { whitespace } from './optimize/whitespace';
 import { getTemplateName } from './utils';
 import { drawGraph } from './graph';
@@ -12,7 +13,7 @@ export class Compiler {
             asModule: true,
             asSingleFileWidget: false
         }, options );
-        this.transforms = [ whitespace, entity, defaultBlock ];
+        this.transforms = [ whitespace, entity, defaultBlock, sfw ];
         this.globals = [
             'window',
             'Array',
@@ -26,7 +27,7 @@ export class Compiler {
         let ast = parser.parse( filename, code );
 
         // Transform.
-        this.transforms.forEach( transform => transform( ast ) );
+        this.transforms.forEach( transform => transform( ast, this.options ) );
 
         return compile(
             this.options.asSingleFileWidget ?
