@@ -1,3 +1,6 @@
+## 2.1.0
+* [#6](https://github.com/sham-ui/sham-ui-templates/issues/6) Add support for single file component
+
 ## 2.0.7
 * Update dependencies
 * Pass owner to directive constructor
