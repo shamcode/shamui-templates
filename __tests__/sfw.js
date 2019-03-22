@@ -52,3 +52,29 @@ it( 'should single file widget correct work with options', async() => {
     widget.update( { loaded: true } );
     expect( widget.container.innerHTML ).toBe( 'Text for content<!--if-->' );
 } );
+
+it( 'should single file widget correct work with imports', async() => {
+    expect.assertions( 1 );
+    const { html } = await renderWidget(
+        compileAsSFW`
+        <template>
+            {% import upperCase from 'upper-case' %}
+
+            <section>
+                {{ upperCase(text) | upperCase }}
+            </section>
+        </template>
+        
+        <script>
+            import { options } from 'sham-ui';
+            class dummy extends Template {
+                @options text = 'default text';
+            }
+        </script>
+        `,
+        {
+            text: 'upper'
+        }
+    );
+    expect( html ).toBe( '<section>UPPER</section>' );
+} );

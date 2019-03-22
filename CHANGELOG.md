@@ -1,3 +1,6 @@
+## 2.1.1
+*  [#7](https://github.com/sham-ui/sham-ui-templates/issues/7) Fix `{% import %}` in SFW 
+
 ## 2.1.0
 * [#6](https://github.com/sham-ui/sham-ui-templates/issues/6) Add support for single file component
 

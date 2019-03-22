@@ -24,6 +24,7 @@ export class Figure {
         this.blocksNeed = false;
         this.thisRef = false;
         this.stateNeed = false;
+        this.requireDefaultNeed = true;
     }
 
     generate() {
@@ -32,8 +33,10 @@ export class Figure {
         if ( this.imports.length > 0 ) {
             sn.add( sourceNode( this.imports ).join( '\n' ) );
             sn.add( '\n' );
-            // eslint-disable-next-line max-len
-            sn.add( 'function __requireDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }\n' );
+            if ( this.requireDefaultNeed ) {
+                // eslint-disable-next-line max-len
+                sn.add( 'function __requireDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }\n' );
+            }
         }
 
         if ( size( this.functions ) > 0 ) {
@@ -355,8 +358,9 @@ export class Figure {
         this.renderActions.push( action );
     }
 
-    addImport( source ) {
+    addImport( source, requireDefaultNeed ) {
         this.imports.push( source );
+        this.requireDefaultNeed = requireDefaultNeed;
     }
 
     addOnUpdate( node ) {
