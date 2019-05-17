@@ -381,7 +381,9 @@ export class Figure {
 
     addScriptCode( node ) {
         node.body.forEach(
-            node => this.scriptCode.push( node.text )
+            subNode => this.scriptCode.push(
+                sourceNode( subNode.loc, subNode.text )
+            )
         );
     }
 }

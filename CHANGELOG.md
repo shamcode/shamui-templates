@@ -1,3 +1,7 @@
+## 2.1.2
+* Add SourceMap for script contents
+* [#8](https://github.com/sham-ui/sham-ui-templates/issues/8) Fix incorrect resolve `this` in blocks
+
 ## 2.1.1
 *  [#7](https://github.com/sham-ui/sham-ui-templates/issues/7) Fix `{% import %}` in SFW 
 

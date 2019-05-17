@@ -1,4 +1,4 @@
-import { compileAsSFW, renderWidget } from './helpers';
+import { compileAsSFW, renderWidget, compile } from './helpers';
 
 it( 'should single file widget work', async() => {
     expect.assertions( 2 );
@@ -77,4 +77,40 @@ it( 'should single file widget correct work with imports', async() => {
         }
     );
     expect( html ).toBe( '<section>UPPER</section>' );
+} );
+
+
+it( 'should single file widget correct work with context in blocks', async() => {
+    expect.assertions( 1 );
+    window.CustomPanel = compile`
+        <div>
+            <div class="title">
+                {% defblock 'title' %}
+            </div>
+        </div>
+    `;
+    const { html } = await renderWidget(
+        compileAsSFW`
+        <template>
+            <CustomPanel>
+                {% block 'title' %}
+                    {{this.title()}}
+                {% endblock %}
+            </CustomPanel>
+        </template>
+        
+        <script>
+            class dummy extends Template {
+                title() {
+                    return 'Title text'
+                };
+            }
+        </script>
+        `
+    );
+    expect( html ).toBe(
+        '<div><div class="title"> Title text <!--title--></div></div><!--CustomPanel-->'
+    );
+
+    delete window.CustomPanel;
 } );

@@ -214,11 +214,8 @@ export default {
     },
 
     ThisExpression: ( { node, figure } ) => {
-        const ref = fig => fig.parent == null ? '' : '.parent' + ref( fig.parent );
-
         figure.thisRef = true;
-
-        return sourceNode( node.loc, '_this' + ref( figure ) );
+        return sourceNode( node.loc, figure.getPathToDocument() );
     },
 
     Identifier: ( { node } ) => {
