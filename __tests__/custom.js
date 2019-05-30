@@ -1,4 +1,4 @@
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.CustomPanel = compile`
@@ -15,7 +15,7 @@ afterEach( () => {
 
 it( 'should properly work with attributes', async() => {
     expect.assertions( 2 );
-    const { widget, html } = await renderWidget(
+    const { component, html } = await renderComponent(
         compile`
             <div>
                 <CustomPanel title="string" content="text"/>
@@ -31,8 +31,8 @@ it( 'should properly work with attributes', async() => {
         // eslint-disable-next-line max-len
         '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>title</h1><div>content</div><!--CustomPanel--></div>'
     );
-    widget.update( { value: 'updated' } );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( { value: 'updated' } );
+    expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
         '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>updated</h1><div>content</div><!--CustomPanel--></div>'
     );

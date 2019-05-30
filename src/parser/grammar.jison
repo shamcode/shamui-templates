@@ -116,6 +116,7 @@ AttributeText [^\"{]+
 <expr>";"                          return ";";
 <expr>","                          return ",";
 <expr>"?"                          return "?";
+<expr>"::"                         return "::";
 <expr>":"                          return ":";
 <expr>"==="                        return "===";
 <expr>"=="                         return "==";
@@ -591,6 +592,10 @@ CallExpression
         {
             $$ = new MemberExpressionNode($1, $3, false, createSourceLocation(@1, @3));
         }
+    | BindExpression Arguments
+        {
+            $$ = new CallExpressionNode($1, $2, createSourceLocation(@1, @2));
+        }
     ;
 
 FilterExpression
@@ -609,6 +614,17 @@ FilterExpression
     | FilterExpression "|" AccessorName Arguments
         {
             $$ = new FilterExpressionNode($3, [$1].concat($4), createSourceLocation(@1, @2));
+        }
+    ;
+
+BindExpression
+    : LeftHandSideExpression "::" MemberExpression
+        {
+            $$ = new BindExpressionNode($1, $2, createSourceLocation(@1, @2));
+        }
+    | "::" MemberExpression
+        {
+            $$ = new BindExpressionNode(null, $2, createSourceLocation(@1, @2));
         }
     ;
 
@@ -660,6 +676,7 @@ ArgumentList
 LeftHandSideExpression
     : NewExpression
     | CallExpression
+    | BindExpression
     ;
 
 

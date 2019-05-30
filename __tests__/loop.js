@@ -1,4 +1,4 @@
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.MyLi = compile`
@@ -21,7 +21,7 @@ afterEach( () => {
 
 it( 'should render arrays', async() => {
     expect.assertions( 3 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <ul>
                 {% for key, value of list %}
@@ -35,18 +35,18 @@ it( 'should render arrays', async() => {
     );
     expect( html ).toBe( '<ul><li>0:1</li><li>1:2</li><li>2:3</li></ul>' );
 
-    widget.update( { list: [ 1, 3 ] } );
-    expect( widget.container.innerHTML ).toBe( '<ul><li>0:1</li><li>1:3</li></ul>' );
+    component.update( { list: [ 1, 3 ] } );
+    expect( component.container.innerHTML ).toBe( '<ul><li>0:1</li><li>1:3</li></ul>' );
 
-    widget.update( { list: [ 'a', 'b', 'c', 'd' ] } );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( { list: [ 'a', 'b', 'c', 'd' ] } );
+    expect( component.container.innerHTML ).toBe(
         '<ul><li>0:a</li><li>1:b</li><li>2:c</li><li>3:d</li></ul>'
     );
 } );
 
 it( 'should render arrays with externals', async() =>{
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <div>
                 {% for value of list %}
@@ -64,7 +64,7 @@ it( 'should render arrays with externals', async() =>{
 
 it( 'should iterate over objects', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% for key, value of obj %}
@@ -82,19 +82,19 @@ it( 'should iterate over objects', async() => {
     );
     expect( html ).toBe( '<div>a: 1; b: 2; c: 3; </div>' );
 
-    widget.update( {
+    component.update( {
         obj: {
             a: 1,
             c: 3,
             d: 4
         }
     } );
-    expect( widget.container.innerHTML ).toBe( '<div>a: 1; c: 3; d: 4; </div>' );
+    expect( component.container.innerHTML ).toBe( '<div>a: 1; c: 3; d: 4; </div>' );
 } );
 
 it( 'should iterate over arrays without options', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <div>
                 {% for obj %}
@@ -115,7 +115,7 @@ it( 'should iterate over arrays without options', async() => {
 
 it( 'should delete old items from childred map with custom tag', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 <MyUl list="{{ list }}"/>
@@ -142,7 +142,7 @@ it( 'should delete old items from childred map with custom tag', async() => {
         '<div><ul><li>1:a</li><!--MyLi--><li>2:b</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>'
     );
 
-    widget.update( {
+    component.update( {
         list: [
             {
                 id: 1,
@@ -154,14 +154,14 @@ it( 'should delete old items from childred map with custom tag', async() => {
             }
         ]
     } );
-    expect( widget.container.innerHTML ).toBe(
+    expect( component.container.innerHTML ).toBe(
         '<div><ul><li>1:a</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>'
     );
 } );
 
 it( 'should not expose local variables', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <section>
                 {% for a of as %}

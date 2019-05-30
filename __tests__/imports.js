@@ -1,5 +1,5 @@
 import upperCase from 'upper-case';
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.require = function( module ) {
@@ -13,7 +13,7 @@ afterEach( () => {
 
 it( 'should require and mount template', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             {% import upperCase from 'upper-case' %}
             <section>

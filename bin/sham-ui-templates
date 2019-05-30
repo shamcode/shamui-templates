@@ -10,7 +10,7 @@ program
   .option('-o, --output [file]', 'output file name, if not specified will write to stdout.')
   .option('-s, --source-map', 'generate source map.')
   .option('--as-module', 'compile as module.')
-  .option('--as-single-file-widget', 'compile as single file widget.')
+  .option('--as-single-file-component', 'compile as single file component.')
   .option('--draw-ast', 'draw ast tree of file.')
   .parse(process.argv);
 
@@ -23,7 +23,7 @@ var compiler, i;
 
 compiler = new Compiler({
   asModule: program.asModule,
-  asSingleFileWidget: program.asSingleFileWidget
+  asSingleFileComponent: program.asSingleFileComponent
 });
 
 var sources = program.args.map(function (file) {

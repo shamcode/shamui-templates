@@ -120,6 +120,13 @@ const visitors = {
             visit( args[ i ], visitor );
         }
     },
+    BindExpression: ( node, visitor ) => {
+        handle( node, visitor );
+        if ( node.object ) {
+            visit( node.object, visitor );
+        }
+        visit( node.callee, visitor );
+    },
     ArrayExpression: ( node, visitor ) => {
         handle( node, visitor );
 

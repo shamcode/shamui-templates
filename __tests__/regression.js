@@ -1,5 +1,5 @@
 import { DI } from 'sham-ui';
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.Tag = compile`
@@ -25,7 +25,7 @@ afterAll( () => {
 
 it( 'should update all values', async() => {
     expect.assertions( 6 );
-    const RegressionParentValues = await renderWidget(
+    const RegressionParentValues = await renderComponent(
         compile`
             <p>{{ value }}</p>
             <p>{% if on %}{{ value }}{% endif %}</p>
@@ -39,12 +39,12 @@ it( 'should update all values', async() => {
     );
     expect( RegressionParentValues.html ).toBe( '<p>1</p><p>1</p><p>111</p>' );
 
-    RegressionParentValues.widget.update( { value: 2 } );
-    expect( RegressionParentValues.widget.container.innerHTML ).toBe(
+    RegressionParentValues.component.update( { value: 2 } );
+    expect( RegressionParentValues.component.container.innerHTML ).toBe(
         '<p>2</p><p>2</p><p>222</p>'
     );
 
-    const RegressionParentValuesComplex = await renderWidget(
+    const RegressionParentValuesComplex = await renderComponent(
         compile`
             <p>{{ a + b }}</p>
             <p>{% if on %}{{ a - b }}{% endif %}</p>
@@ -59,25 +59,25 @@ it( 'should update all values', async() => {
     );
     expect( RegressionParentValuesComplex.html ).toBe( '<p>5</p><p>-1</p><p>66</p>' );
 
-    RegressionParentValuesComplex.widget.update( { a: 4 } );
-    expect( RegressionParentValuesComplex.widget.container.innerHTML ).toBe(
+    RegressionParentValuesComplex.component.update( { a: 4 } );
+    expect( RegressionParentValuesComplex.component.container.innerHTML ).toBe(
         '<p>7</p><p>1</p><p>1212</p>'
     );
 
-    RegressionParentValuesComplex.widget.update( { b: 1 } );
-    expect( RegressionParentValuesComplex.widget.container.innerHTML ).toBe(
+    RegressionParentValuesComplex.component.update( { b: 1 } );
+    expect( RegressionParentValuesComplex.component.container.innerHTML ).toBe(
         '<p>5</p><p>3</p><p>44</p>'
     );
 
-    RegressionParentValuesComplex.widget.update( { a: 2, b: 2 } );
-    expect( RegressionParentValuesComplex.widget.container.innerHTML ).toBe(
+    RegressionParentValuesComplex.component.update( { a: 2, b: 2 } );
+    expect( RegressionParentValuesComplex.component.container.innerHTML ).toBe(
         '<p>4</p><p>0</p><p>44</p>'
     );
 } );
 
 it( 'should update variables in nested views', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <p>
                 {% for i of each %}
@@ -95,13 +95,13 @@ it( 'should update variables in nested views', async() => {
     );
     expect( html ).toBe( '<p>1<!--if-->1<!--if-->1<!--if--></p>' );
 
-    widget.update( { value: 7 } );
-    expect( widget.container.innerHTML ).toBe( '<p>7<!--if-->7<!--if-->7<!--if--></p>' );
+    component.update( { value: 7 } );
+    expect( component.container.innerHTML ).toBe( '<p>7<!--if-->7<!--if-->7<!--if--></p>' );
 } );
 
 it( 'if with custom tag', async() => {
     expect.assertions( 3 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% if test %}
@@ -115,16 +115,16 @@ it( 'if with custom tag', async() => {
     );
     expect( html ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
 
-    widget.update( { test: false } );
-    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+    component.update( { test: false } );
+    expect( component.container.innerHTML ).toBe( '<div></div>' );
 
-    widget.update( { test: true } );
-    expect( widget.container.innerHTML ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
+    component.update( { test: true } );
+    expect( component.container.innerHTML ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
 } );
 
 it( 'for with custom tag', async() => {
     expect.assertions( 3 );
-    const { widget, html } = await renderWidget(
+    const { component, html } = await renderComponent(
         compile`
             <div>
                 {% for array %}
@@ -141,18 +141,18 @@ it( 'for with custom tag', async() => {
         '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
     );
 
-    widget.update( { array: [] } );
-    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+    component.update( { array: [] } );
+    expect( component.container.innerHTML ).toBe( '<div></div>' );
 
-    widget.update( { array: [ 1, 3 ] } );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( { array: [ 1, 3 ] } );
+    expect( component.container.innerHTML ).toBe(
         '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
     );
 } );
 
 it( 'update loops in custom tags', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <i>
                 <custom-tag-with-loop list={{ list }} foo={{ foo }} bar={{ bar }}/>
@@ -171,7 +171,7 @@ it( 'update loops in custom tags', async() => {
 
 it( 'should not update variables what exists only in inner scope', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <p>
                 {% if list %}
@@ -196,7 +196,7 @@ it( 'should not update variables what exists only in inner scope', async() => {
 
 it( 'should cache options variable data for loops', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <ul>
                 {% for code, item of currencies %}
@@ -238,8 +238,8 @@ it( 'should cache options variable data for loops', async() => {
         }
     };
 
-    widget.update( data2 );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( data2 );
+    expect( component.container.innerHTML ).toBe(
         //eslint-disable-next-line max-len
         '<ul><li><span>USD</span>: US dollar</li><!--if--><li><span>EUR</span>: Euro</li><!--if--><li class="selected"><span>AUD</span>: Australian dollar</li><!--if--></ul>'
     );
@@ -267,7 +267,7 @@ it( 'loos should update two levels loops once', async() => {
         color: { color: 'black' }
     };
 
-    const ReLoopMustNotMutateData = await renderWidget(
+    const ReLoopMustNotMutateData = await renderComponent(
         compile`
             <ol>
                 {% for sub of colors %}
@@ -286,7 +286,7 @@ it( 'loos should update two levels loops once', async() => {
         '<ol><li>red</li><li>green</li><li>blue</li><!--for--><li>red</li><li>green</li><li>blue</li><!--for--></ol>'
     );
 
-    const ReLoopMustWorkWithSameNameLoops = await renderWidget(
+    const ReLoopMustWorkWithSameNameLoops = await renderComponent(
         compile`
             <ol>
                 {% for colors %}
@@ -308,7 +308,7 @@ it( 'loos should update two levels loops once', async() => {
 
 it( 'loops with cond and outer scope', async() => {
     expect.assertions( 2 );
-    const { widget, html } = await renderWidget(
+    const { component, html } = await renderComponent(
         compile`
             <div>
                 {% for attr of attributes %}
@@ -338,10 +338,10 @@ it( 'loops with cond and outer scope', async() => {
         //eslint-disable-next-line max-len
         '<div><span>name1</span><span>value1</span><span>outer</span><!--if--><span>name2</span><span>value2</span><span>outer</span><!--if--></div>'
     );
-    widget.update( {
+    component.update( {
         outer: 'outer2'
     } );
-    expect( widget.container.innerHTML ).toBe(
+    expect( component.container.innerHTML ).toBe(
         //eslint-disable-next-line max-len
         '<div><span>name1</span><span>value1</span><span>outer2</span><!--if--><span>name2</span><span>value2</span><span>outer2</span><!--if--></div>'
     );

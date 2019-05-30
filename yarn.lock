@@ -4530,10 +4530,10 @@ set-value@^2.0.0:
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
 
-sham-ui@2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/sham-ui/-/sham-ui-2.0.5.tgz#bde5b09b00951a8a018809799fcfdc48fb5b0716"
-  integrity sha512-ASN2xAnZ0l7yD7F4xzvAt0U1LENs0Y95++GJP4z6+f9VcRmIIAppV09MerWO1tVPD1a1dPtoERB+Qxi7agerpQ==
+sham-ui@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/sham-ui/-/sham-ui-3.0.0.tgz#82f1e55fd298ef14c57e0f2fc8bb4483659fb451"
+  integrity sha512-NJpqffDalrQwjq5mpsgKHkRB7maj68YOwH6TgkgrJvQjA4Avi2HbF0xg/HEqH34Ve+/uxeSx/HVV/iYZprmySA==
   dependencies:
     "@babel/runtime" "^7.1.2"
     nanoid "^1.3.1"

@@ -24,7 +24,7 @@ export const SVGElements = (
 export default {
     Element: ( path ) => {
         if ( HTMLElements.indexOf( path.node.name ) !== -1 ) {
-            if ( path.options.asSingleFileWidget && 'script' === path.node.name  ) {
+            if ( path.options.asSingleFileComponent && 'script' === path.node.name  ) {
                 path.figure.addScriptCode( path.node );
                 return null;
             }

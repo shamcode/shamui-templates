@@ -7,7 +7,7 @@ export default {
         node.reference = null;
 
         if ( !parent || 'Element' !== parent.type ) {
-            throw new Error( 'Usage {% block %} only with custom Widget' );
+            throw new Error( 'Usage {% block %} only with custom Component' );
         }
 
         const parentName = getTemplateName( parent.name );
@@ -38,7 +38,7 @@ export default {
             sourceNode( node.loc, [
                 `      var ${blockVar} = ${parent.childName}.blocks['${blockName}'];\n`,
                 `      if (${blockVar}) {\n`,
-                `        __UI__.insert(${blockVar}.widget, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument});\n`,
+                `        __UI__.insert(${blockVar}.component, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument});\n`,
                 '      }'
             ] )
         );

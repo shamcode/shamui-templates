@@ -1,8 +1,8 @@
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 it( 'should properly render', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <svg width="120" height="30" viewBox="0 0 120 30" fill="red">
                 <circle cx="15" cy="15" r="15"/>

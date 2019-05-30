@@ -99,6 +99,13 @@ function FilterExpressionNode( callee, args, loc ) {
     this.loc = loc;
 }
 
+function BindExpressionNode( object, callee, loc ) {
+    this.type = 'BindExpression';
+    this.object = object;
+    this.callee = callee;
+    this.loc = loc;
+}
+
 function ThisExpressionNode( loc ) {
     this.type = 'ThisExpression';
     this.loc = loc;
@@ -226,6 +233,7 @@ ast.DefBlockStatementNode = DefBlockStatementNode;
 ast.UseBlockStatementNode = UseBlockStatementNode;
 ast.UnsafeStatementNode = UnsafeStatementNode;
 ast.FilterExpressionNode = FilterExpressionNode;
+ast.BindExpressionNode = BindExpressionNode;
 ast.ThisExpressionNode = ThisExpressionNode;
 ast.ArrayExpressionNode = ArrayExpressionNode;
 ast.ObjectExpressionNode = ObjectExpressionNode;

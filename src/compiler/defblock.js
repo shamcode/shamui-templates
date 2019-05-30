@@ -15,7 +15,7 @@ export default {
             sourceNode( [
                 `  this.blocks['${name}'] = {\n`,
                 `    node: ${placeholder},\n`,
-                '    widget: _this\n',
+                '    component: _this\n',
                 '  };'
             ] )
         );

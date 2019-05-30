@@ -1,9 +1,9 @@
 import { DI } from 'sham-ui';
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 it( 'should insert constants as HTML', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <div>
                 {% unsafe "<br>" %}
@@ -16,7 +16,7 @@ it( 'should insert constants as HTML', async() => {
 
 it( 'should insert variables as HTML', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% unsafe html %}
@@ -25,13 +25,13 @@ it( 'should insert variables as HTML', async() => {
     );
     expect( html ).toBe( '<div></div>' );
 
-    widget.update( { html: '<a href="javascript:XSS;">Link</a>' } );
-    expect( widget.container.innerHTML ).toBe( '<div><a href="javascript:XSS;">Link</a></div>' );
+    component.update( { html: '<a href="javascript:XSS;">Link</a>' } );
+    expect( component.container.innerHTML ).toBe( '<div><a href="javascript:XSS;">Link</a></div>' );
 } );
 
 it( 'should remove old DOM nodes and insert new', async() => {
     expect.assertions( 4 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% unsafe html %}
@@ -43,21 +43,21 @@ it( 'should remove old DOM nodes and insert new', async() => {
     );
     expect( html ).toBe( '<div><div>foo</div><br></div>' );
 
-    widget.update( { html: '<input type="datetime"><hr><div>baz</div>' } );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( { html: '<input type="datetime"><hr><div>baz</div>' } );
+    expect( component.container.innerHTML ).toBe(
         '<div><input type="datetime"><hr><div>baz</div></div>'
     );
 
-    widget.update( { html: '' } );
-    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+    component.update( { html: '' } );
+    expect( component.container.innerHTML ).toBe( '<div></div>' );
 
-    widget.update( { html: '<!-- comment -->' } );
-    expect( widget.container.innerHTML ).toBe( '<div><!-- comment --></div>' );
+    component.update( { html: '<!-- comment -->' } );
+    expect( component.container.innerHTML ).toBe( '<div><!-- comment --></div>' );
 } );
 
 it( 'should insert unsafe with placeholders', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% unsafe "<br>" %}
@@ -70,8 +70,8 @@ it( 'should insert unsafe with placeholders', async() => {
     );
     expect( html ).toBe( '<div><br><!--unsafe--><hr><!--unsafe--></div>' );
 
-    widget.update( { html: '<br><!-- comment --><link href="http://ShamUIView.js.org">' } );
-    expect( widget.container.innerHTML ).toBe(
+    component.update( { html: '<br><!-- comment --><link href="http://ShamUIView.js.org">' } );
+    expect( component.container.innerHTML ).toBe(
 
         // eslint-disable-next-line max-len
         '<div><br><!--unsafe--><br><!-- comment --><link href="http://ShamUIView.js.org"><!--unsafe--></div>'
@@ -80,7 +80,7 @@ it( 'should insert unsafe with placeholders', async() => {
 
 it( 'if with unsafe tag', async() => {
     expect.assertions( 3 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
             <div>
                 {% if test %}
@@ -96,17 +96,17 @@ it( 'if with unsafe tag', async() => {
     );
     expect( html ).toBe( '<div><div><i>unsafe</i></div></div>' );
 
-    widget.update( { test: false } );
-    expect( widget.container.innerHTML ).toBe( '<div></div>' );
+    component.update( { test: false } );
+    expect( component.container.innerHTML ).toBe( '<div></div>' );
 
-    widget.update( { test: true } );
-    expect( widget.container.innerHTML ).toBe( '<div><div><i>unsafe</i></div></div>' );
+    component.update( { test: true } );
+    expect( component.container.innerHTML ).toBe( '<div><div><i>unsafe</i></div></div>' );
 } );
 
 
 it( 'should work with first level non-elements', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             text
             {% if cond %}
@@ -141,7 +141,7 @@ it( 'should throw exception if user try to use querySelector on first level non-
     };
     DI.bind( 'logger', loggerMock );
 
-    const { widget } = await renderWidget(
+    const { component } = await renderComponent(
         compile`
             text
             {% if cond %}
@@ -162,7 +162,7 @@ it( 'should throw exception if user try to use querySelector on first level non-
             xss: 'ok'
         }
     );
-    widget.querySelector( '.if' );
+    component.querySelector( '.if' );
 
     expect( loggerMock.error.mock.calls ).toHaveLength( 4 );
     expect( loggerMock.error.mock.calls[ 0 ] ).toHaveLength( 2 );

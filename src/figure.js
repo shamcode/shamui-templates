@@ -50,7 +50,7 @@ export class Figure {
             ' * @class\n',
             ' */\n',
             `function ${this.name}() {\n`,
-            '  __UI__.Widget.apply(this, arguments);\n'
+            '  __UI__.Component.apply(this, arguments);\n'
         ] );
 
         if ( this.isCacheNeeded() ) {
@@ -159,7 +159,7 @@ export class Figure {
         sn.add( '}\n' );
 
         sn.add( [
-            `${this.name}.prototype = Object.create(__UI__.Widget.prototype);\n`,
+            `${this.name}.prototype = Object.create(__UI__.Component.prototype);\n`,
             `${this.name}.prototype.constructor = ${this.name};\n`,
             `${this.name}.prototype.name = '${this.name}';\n`
         ] );

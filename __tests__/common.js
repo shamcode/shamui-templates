@@ -1,18 +1,18 @@
 import { options } from 'sham-ui';
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 it( 'should render simple DOM', async() => {
     expect.assertions( 3 );
-    const { html, text, widget } = await renderWidget( compile`<div>test</div>` );
+    const { html, text, component } = await renderComponent( compile`<div>test</div>` );
     expect( html ).toBe( '<div>test</div>' );
     expect( text ).toBe( 'test' );
-    expect( widget.name ).toBe( 'dummy' );
+    expect( component.name ).toBe( 'dummy' );
 } );
 
 
 it( 'should insert variable as text node', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`<p>{{ text }}</p>`,
         {
             text: 'To understand what recursion is, you must first understand recursion.'
@@ -26,20 +26,20 @@ it( 'should insert variable as text node', async() => {
 
 it( 'should insert variable in attributes', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`<input type="text" value="{{ value }}">`,
         {
             value: 'Value'
         }
     );
-    expect( widget.nodes[ 0 ].value ).toEqual( 'Value' );
+    expect( component.nodes[ 0 ].value ).toEqual( 'Value' );
     expect( html ).toBe( '<input type="text">' );
 } );
 
 
 it( 'should properly work with text constants in text nodes', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`<p>foo {{ bar }} baz</p>`,
         {
             bar: 'bar'
@@ -50,7 +50,7 @@ it( 'should properly work with text constants in text nodes', async() => {
 
 it( 'should properly work with text constants in attributes', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`<div class="foo {{ bar }} baz"></div>`,
         {
             bar: 'bar'
@@ -62,7 +62,7 @@ it( 'should properly work with text constants in attributes', async() => {
 
 it( 'should save value for variables in complex cases', async() => {
     expect.assertions( 2 );
-    const { widget, html } = await renderWidget(
+    const { component, html } = await renderComponent(
         compile`<div class="{{ foo }} {{ bar }}"></div>`,
         {
             foo: 'first',
@@ -70,16 +70,16 @@ it( 'should save value for variables in complex cases', async() => {
         }
     );
     expect( html ).toBe( '<div class="first second"></div>' );
-    widget.update( {
+    component.update( {
         foo: 'updated'
     } );
-    expect( widget.container.innerHTML ).toBe( '<div class="updated second"></div>' );
+    expect( component.container.innerHTML ).toBe( '<div class="updated second"></div>' );
 } );
 
 
 it( 'should properly work with more then one node on topmost level', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
         <p>first</p>
 
@@ -91,7 +91,7 @@ it( 'should properly work with more then one node on topmost level', async() => 
 
 it( 'should optimize "if"/"for" tag, if it is only child', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
         <div>
             <p>
@@ -113,7 +113,7 @@ it( 'should optimize "if"/"for" tag, if it is only child', async() => {
 
 it( 'should place placeholders for multiply "if" tags', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
         <div>
             {% if a %}a{% endif %}
@@ -126,7 +126,7 @@ it( 'should place placeholders for multiply "if" tags', async() => {
 
 it( 'should place placeholders for multiply "if" and "for" tags', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
         <div>
             {% if a %}a{% endif %}
@@ -148,7 +148,7 @@ it( 'should properly for with filters', async() => {
             return value.toUpperCase();
         }
     };
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`<p>{{ text | append('case') | upperCase }}</p>`,
         { filters, text: 'upper_' }
     );
@@ -158,7 +158,7 @@ it( 'should properly for with filters', async() => {
 
 it( 'should work with expressions', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`
         <a title="{{ (a + b) * c / d }}">{{ more.amazing + features[0] + features[1] }}</a>
         `,
@@ -174,22 +174,22 @@ it( 'should work with expressions', async() => {
         }
     );
     expect( html ).toBe( '<a title="150">abc</a>' );
-    widget.update( { more: { amazing: 'Amazing!' } } );
-    expect( widget.container.innerHTML ).toBe( '<a title="150">Amazing!bc</a>' );
+    component.update( { more: { amazing: 'Amazing!' } } );
+    expect( component.container.innerHTML ).toBe( '<a title="150">Amazing!bc</a>' );
 } );
 
 it( 'should render empty attributes', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`<input type="checkbox" value="" checked>`
     );
     expect( html ).toBe( '<input type="checkbox" value="">' );
-    expect( widget.nodes[ 0 ].checked ).toEqual( true );
+    expect( component.nodes[ 0 ].checked ).toEqual( true );
 } );
 
 it( 'should render attributes without quotes', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`<div class={{ name }}></div>`,
         {
             name: 'name'
@@ -200,7 +200,7 @@ it( 'should render attributes without quotes', async() => {
 
 it( 'should work querySelector', async() => {
     expect.assertions( 3 );
-    const { widget } = await renderWidget(
+    const { component } = await renderComponent(
         compile`
             <div id="one" class="foo"></div>
             <div id="two" class="boo">
@@ -208,14 +208,14 @@ it( 'should work querySelector', async() => {
             </div>
         `
     );
-    expect( widget.querySelector( '.foo' ).getAttribute( 'id' ) ).toEqual( 'one' );
-    expect( widget.querySelector( '.boo' ).getAttribute( 'id' ) ).toEqual( 'two' );
-    expect( widget.querySelector( '.baz' ).getAttribute( 'id' ) ).toEqual( 'three' );
+    expect( component.querySelector( '.foo' ).getAttribute( 'id' ) ).toEqual( 'one' );
+    expect( component.querySelector( '.boo' ).getAttribute( 'id' ) ).toEqual( 'two' );
+    expect( component.querySelector( '.baz' ).getAttribute( 'id' ) ).toEqual( 'three' );
 } );
 
 it( 'should support global variables', async() => {
     expect.assertions( 2 );
-    const first = await renderWidget(
+    const first = await renderComponent(
         compile`
         <i>
             {{ host == window.location.host ? 'expr' : '' }},
@@ -232,7 +232,7 @@ it( 'should support global variables', async() => {
         '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i></i>'
     );
 
-    const second = await renderWidget(
+    const second = await renderComponent(
         compile`
             {{ Array.isArray(array) ? 'array' : '' }},
             {{ Math.pow(2, 2) }},
@@ -249,7 +249,7 @@ it( 'should support global variables', async() => {
 
 it( 'should support expressions without variables', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`{{ 1 + 2 * 3 }}`
     );
     expect( html ).toBe( '7' );
@@ -257,7 +257,7 @@ it( 'should support expressions without variables', async() => {
 
 it( 'should ignore all html comments', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <!-- comment with <tags> and {{ expr }}, {% tags %}, --, #, //, >. (c). -->
             <span>Moon</span>
@@ -268,7 +268,7 @@ it( 'should ignore all html comments', async() => {
 
 it( 'should replace HTML entities with Unicode symbols', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`&quot;&amp;&apos;&lt;&gt;&copy;&pound;&plusmn;&para;&ensp;&mdash;&emsp;&euro;&thinsp;&hearts;&notExists;`
     );
     expect( html ).toBe( '"&amp;\'&lt;&gt;©£±¶ — € ♥&amp;notExists;' );
@@ -276,11 +276,11 @@ it( 'should replace HTML entities with Unicode symbols', async() => {
 
 it( 'should don\'t lose options descriptors after update', async() => {
     expect.assertions( 2 );
-    const { html, widget } = await renderWidget(
+    const { html, component } = await renderComponent(
         compile`<span>Dummy</span>`
     );
     expect( html ).toBe( '<span>Dummy</span>' );
-    expect( widget.options.types ).toEqual( [] );
+    expect( component.options.types ).toEqual( [] );
 } );
 
 it( 'should override options', async() => {
@@ -290,13 +290,13 @@ it( 'should override options', async() => {
             return 'Foo';
         }
     }
-    const { html, widget } = await renderWidget( ExtendedDummy );
-    expect( widget.options.text ).toBe( 'Foo' );
+    const { html, component } = await renderComponent( ExtendedDummy );
+    expect( component.options.text ).toBe( 'Foo' );
 
     expect( html ).toBe( '<span>Foo</span>' );
-    widget.update( {
+    component.update( {
         text: 'Bar'
     } );
-    expect( widget.container.innerHTML ).toBe( '<span>Bar</span>' );
-    expect( widget.options.text ).toBe( 'Bar' );
+    expect( component.container.innerHTML ).toBe( '<span>Bar</span>' );
+    expect( component.options.text ).toBe( 'Bar' );
 } );

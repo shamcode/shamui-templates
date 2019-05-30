@@ -1,6 +1,44 @@
 import { sourceNode } from './sourceNode';
 import { collectVariables } from './variable';
 
+function isStatic( node ) {
+    return node.type === 'ThisExpression' || node.type === 'Identifier';
+}
+
+function getStaticContext( bind ) {
+    const object = bind.object || bind.callee.object;
+    return isStatic( object ) && object;
+}
+
+function buildBindContextAndCallee( bind, figure, compile ) {
+    const staticContext = getStaticContext( bind );
+    let callee;
+    let context;
+    if ( staticContext ) {
+        if ( staticContext.type === 'ThisExpression' ) {
+            figure.thisRef = true;
+            context = figure.getPathToDocument();
+            if ( bind.object ) {
+                callee = compile( bind.callee );
+            } else {
+                callee = `${context}.${compile( bind.callee.property )}`;
+            }
+            return { context, callee };
+        } else if ( staticContext.type === 'Identifier' ) {
+            context = staticContext.name;
+        }
+    } else {
+        context = `context${figure.uniqid( 'context' )}`;
+        figure.declare( sourceNode( bind.loc, `var ${context.name};` ) );
+    }
+    if ( bind.object ) {
+        callee = `(${context} = ${compile( bind.object )}, ${compile( bind.callee )})`;
+    } else {
+        callee = `(${context.name} = ${compile( bind.callee.object )}).${compile( bind.callee.property )}`;
+    }
+    return { context, callee };
+}
+
 export default {
     ExpressionStatement: ( { node, compile, figure } ) => {
         node.reference = 'text' + figure.uniqid();
@@ -55,6 +93,13 @@ export default {
         }
 
         return sn.add( ')' );
+    },
+
+    BindExpression: ( { node, figure, compile } ) => {
+        const { context, callee } = buildBindContextAndCallee( node, figure, compile );
+        return sourceNode( node.loc, [
+            callee, '.bind(', context, ')'
+        ] );
     },
 
     ArrayExpression: ( { node, compile } ) => {
@@ -189,8 +234,20 @@ export default {
         return sn;
     },
 
-    CallExpression: ( { node, compile } ) => {
-        let sn = sourceNode( node.loc, [ compile( node.callee ), '(' ] );
+    CallExpression: ( { node, figure, compile } ) => {
+        let sn;
+        if ( node.callee.type === 'BindExpression' ) {
+            const bind = node.callee;
+            const { context, callee } = buildBindContextAndCallee( bind, figure );
+            sn = sourceNode( node.loc, [
+                callee, '.call(', context
+            ] );
+            if ( node.arguments.length > 0 ) {
+                sn.add( ', ' );
+            }
+        } else {
+            sn = sourceNode( node.loc, [ compile( node.callee ), '(' ] );
+        }
 
         for ( let i = 0; i < node.arguments.length; i++ ) {
             if ( i !== 0 ) {

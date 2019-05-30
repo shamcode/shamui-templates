@@ -10,7 +10,7 @@ export default {
                 figure.generate(), '\n',
                 `module.exports = ${figure.name};\n`
             ] );
-        } else if ( options.asSingleFileWidget ) {
+        } else if ( options.asSingleFileComponent ) {
             return sourceNode( node.loc, [ figure.generate() ] );
         } else {
             return sourceNode( node.loc, [

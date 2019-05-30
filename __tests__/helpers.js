@@ -8,12 +8,12 @@ const compiler = new Compiler( {
     asModule: false
 } );
 
-const compilerForSFW = new Compiler( {
-    asSingleFileWidget: true,
+const compilerForSFC = new Compiler( {
+    asSingleFileComponent: true,
     asModule: false
 } );
 
-function evalWidget( code ) {
+function evalComponent( code ) {
     const fn = new Function( `var require=arguments[0];${code}return dummy;` );
     return fn( require );
 }
@@ -26,26 +26,26 @@ export function compile( strings ) {
             strings.join( '\n' ).trim()
         )
     );
-    return evalWidget( node.toString() );
+    return evalComponent( node.toString() );
 }
 
-export function compileAsSFW( strings ) {
+export function compileAsSFC( strings ) {
     const node = sourceNode( '' );
     node.add(
-        compilerForSFW.compile(
+        compilerForSFC.compile(
             'dummy.shw',
             strings.join( '\n' ).trim()
         )
     );
     const { code } = transformSync( node.toString(), rootPackage.babel );
-    return evalWidget( code );
+    return evalComponent( code );
 }
 
-export function renderWidget( widgetConstructor, options = {} ) {
+export function renderComponent( componentConstructor, options = {} ) {
     return new Promise( resolve => {
-        let widget;
-        DI.bind( 'widget-binder', function() {
-            widget = new widgetConstructor( {
+        let component;
+        DI.bind( 'component-binder', function() {
+            component = new componentConstructor( {
                 ID: 'dummy',
                 containerSelector: 'body',
                 ...options
@@ -55,7 +55,7 @@ export function renderWidget( widgetConstructor, options = {} ) {
         UI.render.one( 'RenderComplete', () => {
             const body = document.querySelector( 'body' );
             resolve( {
-                widget,
+                component,
                 html: body.innerHTML,
                 text: body.textContent
             } );

@@ -1,9 +1,9 @@
-import { compileAsSFW, renderWidget, compile } from './helpers';
+import { compileAsSFC, renderComponent, compile } from './helpers';
 
-it( 'should single file widget work', async() => {
+it( 'should single file component work', async() => {
     expect.assertions( 2 );
-    const { widget, html } = await renderWidget(
-        compileAsSFW`
+    const { component, html } = await renderComponent(
+        compileAsSFC`
         <template>
             {% if loaded %}
                 Loaded!
@@ -21,14 +21,14 @@ it( 'should single file widget work', async() => {
         }
     );
     expect( html ).toBe( '<!--if-->' );
-    widget.update( { loaded: true } );
-    expect( widget.container.innerHTML ).toBe( ' Loaded! <!--if-->' );
+    component.update( { loaded: true } );
+    expect( component.container.innerHTML ).toBe( ' Loaded! <!--if-->' );
 } );
 
-it( 'should single file widget correct work with options', async() => {
+it( 'should single file component correct work with options', async() => {
     expect.assertions( 2 );
-    const { widget, html } = await renderWidget(
-        compileAsSFW`
+    const { component, html } = await renderComponent(
+        compileAsSFC`
         <template>
             {% if loaded %}
                 {{text}}
@@ -49,14 +49,14 @@ it( 'should single file widget correct work with options', async() => {
         }
     );
     expect( html ).toBe( '<!--if-->' );
-    widget.update( { loaded: true } );
-    expect( widget.container.innerHTML ).toBe( 'Text for content<!--if-->' );
+    component.update( { loaded: true } );
+    expect( component.container.innerHTML ).toBe( 'Text for content<!--if-->' );
 } );
 
-it( 'should single file widget correct work with imports', async() => {
+it( 'should single file component correct work with imports', async() => {
     expect.assertions( 1 );
-    const { html } = await renderWidget(
-        compileAsSFW`
+    const { html } = await renderComponent(
+        compileAsSFC`
         <template>
             {% import upperCase from 'upper-case' %}
 
@@ -80,7 +80,7 @@ it( 'should single file widget correct work with imports', async() => {
 } );
 
 
-it( 'should single file widget correct work with context in blocks', async() => {
+it( 'should single file component correct work with context in blocks', async() => {
     expect.assertions( 1 );
     window.CustomPanel = compile`
         <div>
@@ -89,8 +89,8 @@ it( 'should single file widget correct work with context in blocks', async() => 
             </div>
         </div>
     `;
-    const { html } = await renderWidget(
-        compileAsSFW`
+    const { html } = await renderComponent(
+        compileAsSFC`
         <template>
             <CustomPanel>
                 {% block 'title' %}

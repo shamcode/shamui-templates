@@ -1,13 +1,13 @@
 import { DI } from 'sham-ui';
-import { compile, renderWidget } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.Custom = compile`
         <div id="custom" :ref={{name}}>{{name}}</div>
     `;
     window.Ref = class {
-        constructor( widget ) {
-            this.widget = widget;
+        constructor( component ) {
+            this.component = component;
             this.node = null;
             this.name = null;
         }
@@ -19,14 +19,14 @@ beforeEach( () => {
         unbind() {
             this.node = null;
             if ( this.name ) {
-                delete this.widget[ this.name ];
+                delete this.component[ this.name ];
             }
             this.name = null;
         }
 
         update( name ) {
             this.name = name;
-            this.widget[ name ] = this.node;
+            this.component[ name ] = this.node;
         }
     };
 } );
@@ -54,7 +54,7 @@ it( 'should be trimmed from html', async() =>{
         content: directiveMock()
     };
 
-    const { html } = await renderWidget(
+    const { html } = await renderComponent(
         compile`
             <div :fade/>
             <div :show={{ visible }}/>
@@ -77,26 +77,26 @@ it( 'methods bind, update, unbind should be called', async() => {
 
     const directives = { directive };
 
-    const { widget } = await renderWidget(
+    const { component } = await renderComponent(
         compile`<div :directive={{ value }}/>`,
         {
             directives,
             value: true
         }
     );
-    expect( directive ).toHaveBeenCalledWith( widget );
-    expect( directive.prototype.bind ).toHaveBeenCalledWith( widget.nodes[ 0 ] );
+    expect( directive ).toHaveBeenCalledWith( component );
+    expect( directive.prototype.bind ).toHaveBeenCalledWith( component.nodes[ 0 ] );
     expect( directive.prototype.update ).toHaveBeenCalledWith( true );
 
-    DI.resolve( 'sham-ui' ).render.unregister( widget.ID );
+    DI.resolve( 'sham-ui' ).render.unregister( component.ID );
 
-    expect( directive.prototype.unbind ).toHaveBeenCalledWith( widget.nodes[ 0 ] );
+    expect( directive.prototype.unbind ).toHaveBeenCalledWith( component.nodes[ 0 ] );
 } );
 
 it( 'ref directive', async() => {
     expect.assertions( 9 );
 
-    const { widget } = await renderWidget(
+    const { component } = await renderComponent(
         compile`
             <div>
                 <div id="foo" :ref="foo">
@@ -115,27 +115,27 @@ it( 'ref directive', async() => {
             test: true
         }
     );
-    expect( widget.foo.id ).toBe( 'foo' );
-    expect( widget.trueInner.id ).toBe( 'test-true' );
-    expect( widget.falseInner ).toBe( undefined );
+    expect( component.foo.id ).toBe( 'foo' );
+    expect( component.trueInner.id ).toBe( 'test-true' );
+    expect( component.falseInner ).toBe( undefined );
 
-    widget.update( { test: false } );
+    component.update( { test: false } );
 
-    expect( widget.foo.id ).toBe( 'foo' );
-    expect( widget.trueInner ).toBe( undefined );
-    expect( widget.falseInner.id ).toBe( 'test-false' );
+    expect( component.foo.id ).toBe( 'foo' );
+    expect( component.trueInner ).toBe( undefined );
+    expect( component.falseInner.id ).toBe( 'test-false' );
 
-    DI.resolve( 'sham-ui' ).render.unregister( widget.ID );
+    DI.resolve( 'sham-ui' ).render.unregister( component.ID );
 
-    expect( widget.foo ).toBe( undefined );
-    expect( widget.trueInner ).toBe( undefined );
-    expect( widget.falseInner ).toBe( undefined );
+    expect( component.foo ).toBe( undefined );
+    expect( component.trueInner ).toBe( undefined );
+    expect( component.falseInner ).toBe( undefined );
 } );
 
 it( 'ref directive with custom tag', async() => {
     expect.assertions( 5 );
 
-    const { widget, html } = await renderWidget(
+    const { component, html } = await renderComponent(
         compile`
             <div>
                 <div id="foo" :ref="foo">
@@ -157,12 +157,12 @@ it( 'ref directive with custom tag', async() => {
     expect( html ).toBe(
         '<div><div id="foo"><div id="custom">foo</div><!--Custom--></div></div>'
     );
-    expect( widget.foo.id ).toBe( 'foo' );
-    expect( widget.bar ).toBe( undefined );
+    expect( component.foo.id ).toBe( 'foo' );
+    expect( component.bar ).toBe( undefined );
 
-    widget.update( { test: false } );
+    component.update( { test: false } );
 
-    expect( widget.foo.id ).toBe( 'foo' );
-    expect( widget.bar ).toBe( undefined );
+    expect( component.foo.id ).toBe( 'foo' );
+    expect( component.bar ).toBe( undefined );
 } );
 

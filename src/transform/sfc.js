@@ -1,7 +1,7 @@
 import { visit } from '../visitor';
 
-export function sfw( ast, options ) {
-    if ( !options.asSingleFileWidget ) {
+export function sfc( ast, options ) {
+    if ( !options.asSingleFileComponent ) {
         return;
     }
     visit( ast, {
