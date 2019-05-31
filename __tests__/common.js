@@ -2,11 +2,10 @@ import { options } from 'sham-ui';
 import { compile, renderComponent } from './helpers';
 
 it( 'should render simple DOM', async() => {
-    expect.assertions( 3 );
-    const { html, text, component } = await renderComponent( compile`<div>test</div>` );
+    expect.assertions( 2 );
+    const { html, text } = await renderComponent( compile`<div>test</div>` );
     expect( html ).toBe( '<div>test</div>' );
     expect( text ).toBe( 'test' );
-    expect( component.name ).toBe( 'dummy' );
 } );
 
 

@@ -160,11 +160,12 @@ export class Figure {
 
         sn.add( [
             `${this.name}.prototype = Object.create(__UI__.Component.prototype);\n`,
-            `${this.name}.prototype.constructor = ${this.name};\n`,
-            `${this.name}.prototype.name = '${this.name}';\n`
+            `${this.name}.prototype.constructor = ${this.name};\n`
         ] );
 
-        sn.add( this.generateUpdateFunction() );
+        if ( size( this.spots ) > 0 || this.onUpdate.length > 0 ) {
+            sn.add( this.generateUpdateSpotsFunction() );
+        }
 
         for ( let subfigure of this.subFigures ) {
             sn.add( subfigure.generate() );
@@ -200,15 +201,10 @@ export class Figure {
         return sourceNode( null, parts ).join( ',\n' );
     }
 
-    generateUpdateFunction() {
+    generateUpdateSpotsFunction() {
         let sn = sourceNode(
-            `${this.name}.prototype.update = function (__currentData__) {\n`
+            `${this.name}.prototype.updateSpots = function(__data__) {\n`
         );
-
-        sn.add( [
-            '  var __data__ = Object.assign({}, this.options, __currentData__);\n',
-            '  this.__data__ = __data__;\n'
-        ] );
 
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
             .sort( ( a, b ) => a.length - b.length );
@@ -251,14 +247,7 @@ export class Figure {
             sn.add( '  this.onUpdate(__data__);\n' );
         }
 
-        sn.add( [
-            '  if (__currentData__) {\n',
-            // eslint-disable-next-line max-len
-            '    Object.defineProperties(this.options, Object.getOwnPropertyDescriptors(__currentData__));\n',
-            '  }\n',
-            '  delete this.__data__;\n',
-            '};\n'
-        ] );
+        sn.add( '};\n' );
         return sn;
     }
 

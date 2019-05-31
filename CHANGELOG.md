@@ -1,3 +1,7 @@
+## 3.1.0
+* Move common parts for `update` from `sham-ui-templates` to `sham-ui`
+* Remove widget name from prototype
+
 ## 3.0.0
 * Rename widget to component
 * Update `sham-ui`
