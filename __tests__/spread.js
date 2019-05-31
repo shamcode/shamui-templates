@@ -1,4 +1,4 @@
-import { compile, renderComponent } from './helpers';
+import { compile, compileAsSFC, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.SpreadCustom = compile`
@@ -178,4 +178,97 @@ it( 'should work for custom tags with attributes with values', async() => {
         foo: 'for'
     } );
     expect( component.container.innerHTML ).toBe( '<div><i>for</i><i>boo</i><i>bar</i></div>' );
+} );
+
+it( 'should work for custom tags proxy __data__', async() => {
+    expect.assertions( 2 );
+    const { html, component } = await renderComponent(
+        compile`
+            <div>
+                <SpreadCustom {{...this.__data__}}/>
+            </div>
+        `,
+        {
+            foo: 'foo',
+            boo: 'boo',
+            bar: 'bar'
+        }
+    );
+    expect( html ).toBe( '<div><i>foo</i><i>boo</i><i>bar</i></div>' );
+
+    component.update( {
+        boo: 'Boo-Ya'
+    } );
+    expect( component.container.innerHTML ).toBe( '<div><i>foo</i><i>Boo-Ya</i><i>bar</i></div>' );
+} );
+
+it( 'should work extend template with spread', async() => {
+    expect.assertions( 2 );
+    window.SpreadCustom = compileAsSFC`
+        <template>
+            {% defblock 'before' %}
+            <i>{{ foo }}</i>
+            <i>{{ boo }}</i>
+            {% defblock 'inner' %}
+            <i>{{ bar }}</i>
+            <i>{{ this.method() }}</i>
+            {% defblock 'after' %}
+        </template>
+        <script>
+            class dummy extends Template {
+                method() {
+                    return 'Original content of template';
+                }
+            }
+        </script>
+    `;
+
+    const { html, component } = await renderComponent(
+        compileAsSFC`
+        <template>
+            <SpreadCustom {{...this.__data__}}>
+               {% block 'before' %}
+                  <i>Before {{baz}}</i>
+               {% endblock %}
+               {% block 'inner' %}
+                  <i>Inner {{baz}}</i>
+               {% endblock %}
+               {% block 'after' %}
+                  <i>After {{baz}}</i>
+               {% endblock %}
+            </SpreadCustom>        
+        </template>
+        <script>
+        
+            // Make extending SpreadCustom
+            const SpreadCustom = class extends window.SpreadCustom {
+                method() {
+                    return super.method() + ' & extending content';
+                }
+            };
+            
+            // export default Template
+            const dummy = Template;
+        </script>
+        `,
+        {
+            foo: 'foo',
+            boo: 'boo',
+            bar: 'bar',
+            baz: 'baz'
+        }
+    );
+    expect( html ).toBe(
+        // eslint-disable-next-line max-len
+        ' <i>Before baz</i> <!--before--><i>foo</i><i>boo</i> <i>Inner baz</i> <!--inner--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After baz</i> <!--after--><!--SpreadCustom-->'
+    );
+
+    component.update( {
+        boo: 'Boo-Ya',
+        baz: 'Baz-Ya'
+    } );
+    expect( component.container.innerHTML ).toBe(
+        // eslint-disable-next-line max-len
+        ' <i>Before Baz-Ya</i> <!--before--><i>foo</i><i>Boo-Ya</i> <i>Inner Baz-Ya</i> <!--inner--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After Baz-Ya</i> <!--after--><!--SpreadCustom-->'
+    );
 } );

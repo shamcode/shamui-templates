@@ -31,9 +31,9 @@ function AttributeNode( name, body, loc ) {
     this.loc = loc;
 }
 
-function SpreadAttributeNode( identifier, loc ) {
+function SpreadAttributeNode( body, loc ) {
     this.type = 'SpreadAttribute';
-    this.identifier = identifier;
+    this.body = body;
     this.loc = loc;
 }
 

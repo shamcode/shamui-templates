@@ -96,7 +96,7 @@ export default {
      * @param {AttributeNode} node
      * @param {Figure} figure
      */
-    SpreadAttribute: ( { parent, node, figure } ) => {
+    SpreadAttribute: ( { parent, node, figure, compile } ) => {
         figure.root().addFunction( '__spread', sourceNode( [
             'function (node, attr) {\n',
             '  for (var property in attr) if (attr.hasOwnProperty(property)) {\n',
@@ -109,10 +109,14 @@ export default {
             '}'
         ] ) );
 
-        let attr = node.identifier.name;
-        figure.spot( attr ).add(
-            sourceNode( node.loc, `      __spread(${parent.reference}, ${attr})` )
-        );
+        let [ expr ] = compileToExpression( figure, node, compile );
+        const variables = collectVariables( figure.getScope(), expr );
+        const sn = sourceNode( node.loc, `      __spread(${parent.reference}, ${compile( expr )})` );
+        if ( variables.length > 0 ) {
+            figure.spot( variables ).add( sn );
+        } else {
+            figure.addOnUpdate( sn );
+        }
     }
 };
 

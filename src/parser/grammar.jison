@@ -371,9 +371,9 @@ PlainAttribute
 
 
 SpreadAttribute
-    : "{{" "..." IdentifierName "}}"
+    : "{{" "..." Expression "}}"
         {
-          $$ = new SpreadAttributeNode($3, createSourceLocation(@1, @4));
+          $$ = new SpreadAttributeNode([$3], createSourceLocation(@1, @4));
         }
     ;
 

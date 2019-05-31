@@ -27,12 +27,16 @@ export default {
         // Collect info about variables and attributes.
         for ( let attr of node.attributes ) {
             if ( attr.type === 'SpreadAttribute' ) {
-                figure.spot( attr.identifier.name ).add(
-                    sourceNode( node.loc,
-                        `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${attr.identifier.name}, ${figure.getPathToDocument()})`
-                    )
+                let [ expr ] = compileToExpression( figure, attr, compile );
+                const variables = collectVariables( figure.getScope(), expr );
+                let spreadSN = sourceNode( node.loc,
+                    `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()})`
                 );
-
+                if ( variables.length > 0 ) {
+                    figure.spot( variables ).add( spreadSN );
+                } else {
+                    figure.addOnUpdate( spreadSN );
+                }
             } else {
 
                 let [ expr ] = compileToExpression( figure, attr, compile ); // TODO: Add support for default value in custom tag attributes attr={{ value || 'default' }}.

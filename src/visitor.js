@@ -48,7 +48,11 @@ const visitors = {
     },
     SpreadAttribute: ( node, visitor ) => {
         handle( node, visitor );
-        visit( node.identifier, visitor );
+        if ( node.body ) {
+            for ( let i = 0; i < node.body.length; i++ ) {
+                visit( node.body[ i ], visitor );
+            }
+        }
     },
     Directive: ( node, visitor ) => {
         handle( node, visitor );
