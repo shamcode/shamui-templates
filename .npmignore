@@ -7,3 +7,4 @@ TODO.md
 README.md
 testem.json
 .eslintrc.js
+.travis.yml
