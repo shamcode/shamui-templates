@@ -1,3 +1,6 @@
+## 3.2.1
+* Update dependencies
+
 ## 3.2.0
 * Support expression in `SpreadAttribute` & example for extending component template 
 
