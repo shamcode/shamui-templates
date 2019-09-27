@@ -17,37 +17,37 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `var ${placeholder} = document.createComment('if');` ) );
+            figure.declare( sourceNode( `const ${placeholder} = document.createComment( 'if' );` ) );
         }
 
 
-        figure.declare( `var ${childNameForThen} = {};` );
+        figure.declare( `const ${childNameForThen} = {};` );
 
         if ( node.otherwise ) {
-            figure.declare( `var ${childNameForOtherwise} = {};` );
+            figure.declare( `const ${childNameForOtherwise} = {};` );
         }
 
         // if (
 
-        var variablesOfExpression = collectVariables( figure.getScope(), node.cond );
+        const variablesOfExpression = collectVariables( figure.getScope(), node.cond );
 
         figure.thisRef = true;
         figure.hasNested = true;
 
         figure.spot( variablesOfExpression ).add(
             sourceNode( node.loc, [
-                '      ',
+                '                ',
                 node.otherwise ? 'result = ' : '',
-                `__UI__.cond(_this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                    node.cond ), `, ${figure.getPathToDocument()})`
+                `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                    node.cond ), `, ${figure.getPathToDocument()} )`
             ] )
         );
 
         if ( node.otherwise ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
-                    '      ',
-                    `__UI__.cond(_this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()})`
+                    '                ',
+                    `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
                 ] )
             ).declareVariable( 'result' );
         }
@@ -61,9 +61,9 @@ export default {
 
             figure.addOnUpdate(
                 sourceNode( loc, [
-                    `    if (${childName}.ref) {\n`,
-                    `      ${childName}.ref.update(__data__);\n`,
-                    '    }'
+                    `            if ( ${childName}.ref ) {\n`,
+                    `                ${childName}.ref.update( __data__ );\n`,
+                    '            }'
                 ] )
             );
         };

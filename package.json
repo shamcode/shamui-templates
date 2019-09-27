@@ -1,13 +1,18 @@
 {
   "name": "sham-ui-templates",
   "version": "3.2.5",
-  "description": "Template support for [sham-ui](https://github.com/shamcode/shamUI), based on [Monkberry](https://github.com/antonmedv/monkberry)",
+  "description": "Template support for [sham-ui](https://github.com/sham-ui/sham-ui), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
   "babel": {
     "presets": [
       [
-        "@babel/preset-env"
+        "@babel/env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": 3,
+          "shippedProposals": true
+        }
       ]
     ],
     "plugins": [
@@ -70,7 +75,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.2.0",
     "asciitree": "^1.0.2",
     "sham-ui": "3.3.0",
     "source-map": "^0.5.7"
@@ -78,14 +82,16 @@
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.1.5",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.5",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
+    "@babel/runtime": "^7.4.5",
     "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.0.2",
     "babel-jest": "^23.6.0",
-    "babel-loader": "^8.0.4",
+    "babel-loader": "^8.0.6",
+    "core-js": "^3.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-jest": "^21.26.0",
     "jest": "^24.8.0",
@@ -105,5 +111,10 @@
   "bugs": {
     "url": "https://github.com/sham-ui/sham-ui-templates/issues"
   },
-  "homepage": "https://github.com/sham-ui/sham-ui-templates#readme"
+  "homepage": "https://github.com/sham-ui/sham-ui-templates#readme",
+  "browserslist": [
+    "> 1%",
+    "not dead",
+    "not ie <= 11"
+  ]
 }

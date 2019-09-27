@@ -1,9 +1,9 @@
 import { visit } from '../visitor';
 
 export function collectVariables( scope, node ) {
-    var variables = [];
+    const variables = [];
     if ( node ) {
-        var nodes = [].concat( node );
+        const nodes = [].concat( node );
         nodes.forEach( ( node ) => {
             visit( node, {
                 Identifier: ( node ) => {

@@ -1,4 +1,3 @@
-import { DI } from 'sham-ui';
 import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
@@ -88,7 +87,7 @@ it( 'methods bind, update, unbind should be called', async() => {
     expect( directive.prototype.bind ).toHaveBeenCalledWith( component.nodes[ 0 ] );
     expect( directive.prototype.update ).toHaveBeenCalledWith( true );
 
-    DI.resolve( 'sham-ui' ).render.unregister( component.ID );
+    component.remove();
 
     expect( directive.prototype.unbind ).toHaveBeenCalledWith( component.nodes[ 0 ] );
 } );
@@ -125,7 +124,7 @@ it( 'ref directive', async() => {
     expect( component.trueInner ).toBe( undefined );
     expect( component.falseInner.id ).toBe( 'test-false' );
 
-    DI.resolve( 'sham-ui' ).render.unregister( component.ID );
+    component.remove();
 
     expect( component.foo ).toBe( undefined );
     expect( component.trueInner ).toBe( undefined );

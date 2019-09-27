@@ -14,7 +14,7 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'unsafe' + unsafeNumber;
-            figure.declare( sourceNode( `var ${placeholder} = document.createComment('unsafe');` ) );
+            figure.declare( sourceNode( `var ${placeholder} = document.createComment( 'unsafe' );` ) );
         }
 
 
@@ -53,7 +53,7 @@ export default {
  * @param html {string} Unsafe html to insert.
  */
 function unsafe( root, nodes, html ) {
-    var j, i = nodes.length, element = document.createElement( 'div' );
+    let j, i = nodes.length, element = document.createElement( 'div' );
     element.innerHTML = html;
 
     while ( i-- > 0 ) {

@@ -14,7 +14,7 @@ export default {
         const blockName = getStringLiteralValue( node.name );
         const templateName = `${figure.name}_${parentName}_block_${blockName}_${figure.uniqid( 'template_name' )}`;
         const childName = 'child' + figure.uniqid( 'child_name' );
-        figure.declare( `var ${childName} = {};` );
+        figure.declare( `const ${childName} = {};` );
 
         let compileBody = ( loc, body, templateName, childName ) => {
             let subfigure = new Figure( templateName, figure );
@@ -23,9 +23,9 @@ export default {
 
             figure.addOnUpdate(
                 sourceNode( loc, [
-                    `    if (${childName}.ref) {\n`,
-                    `      ${childName}.ref.update(__data__);\n`,
-                    '    }'
+                    `            if ( ${childName}.ref ) {\n`,
+                    `                ${childName}.ref.update( __data__ );\n`,
+                    '            }'
                 ] )
             );
         };
@@ -36,10 +36,10 @@ export default {
         const blockVar = `${varName}${figure.uniqid( varName )}`;
         parent.addBlockMethod(
             sourceNode( node.loc, [
-                `      var ${blockVar} = ${parent.childName}.blocks['${blockName}'];\n`,
-                `      if (${blockVar}) {\n`,
-                `        __UI__.insert(${blockVar}.component, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument});\n`,
-                '      }'
+                `                const ${blockVar} = ${parent.childName}.blocks[ '${blockName}' ];\n`,
+                `                if ( ${blockVar} ) {\n`,
+                `                    __UI__.insert( ${blockVar}.component, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument} );\n`,
+                '                }'
             ] )
         );
 

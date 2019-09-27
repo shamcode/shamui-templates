@@ -14,18 +14,18 @@ export class Spot {
 
     generate() {
         let sn = sourceNode(
-            `function (${this.variables.join( ', ' )}) {\n`
+            `( ${this.variables.join( ', ' )} ) {\n`
         );
 
         Object.keys( this.declaredVariables ).forEach( name => {
-            sn.add( `      var ${name};\n` );
+            sn.add( `            let ${name};\n` );
         } );
 
         if ( this.operators.length > 0 ) {
             sn.add( sourceNode( this.operators ).join( ';\n' ) ).add( ';\n' );
         }
 
-        sn.add( '    }' );
+        sn.add( '            }' );
 
         return sn;
     }

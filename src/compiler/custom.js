@@ -15,11 +15,11 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'custom' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `var ${placeholder} = document.createComment('${node.name}');` ) );
+            figure.declare( sourceNode( `const ${placeholder} = document.createComment( '${node.name}' );` ) );
         }
 
         figure.thisRef = true;
-        figure.declare( sourceNode( `var ${childName} = {};` ) );
+        figure.declare( sourceNode( `const ${childName} = {};` ) );
 
         let data = [];
         let variables = [];
@@ -30,7 +30,7 @@ export default {
                 let [ expr ] = compileToExpression( figure, attr, compile );
                 const variables = collectVariables( figure.getScope(), expr );
                 let spreadSN = sourceNode( node.loc,
-                    `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()})`
+                    `            __UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()} )`
                 );
                 if ( variables.length > 0 ) {
                     figure.spot( variables ).add( spreadSN );
@@ -52,18 +52,19 @@ export default {
         data = `{${data.join( ', ' )}}`;
 
 
+        let blockCode = `__UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()} )`;
+
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {
             const spot = figure.spot( variables );
             node.addBlockMethod = spot.add.bind( spot );
+            blockCode = `                ${blockCode}`;
         } else {
             node.addBlockMethod = figure.addRenderActions.bind( figure );
+            blockCode = `            ${blockCode}`;
         }
-
         node.addBlockMethod(
-            sourceNode( node.loc,
-                `      __UI__.insert(_this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()})`
-            )
+            sourceNode( node.loc, blockCode )
         );
 
         if ( node.body.length > 0 ) {

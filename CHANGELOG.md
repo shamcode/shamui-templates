@@ -1,3 +1,7 @@
+## master
+* Generate ES6 class 
+* Fix links to `sham-ui` repo
+
 ## 3.2.5
 * Update dependencies
 

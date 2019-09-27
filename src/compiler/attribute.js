@@ -33,7 +33,7 @@ export default {
     Attribute: ( { parent, node, figure, compile } ) => {
         let [ expr, defaults ] = compileToExpression( figure, node, compile );
 
-        var variables = collectVariables( figure.getScope(), expr );
+        const variables = collectVariables( figure.getScope(), expr );
 
         if ( variables.length === 0 ) {
             figure.construct( sourceNode( node.loc, [
@@ -98,20 +98,20 @@ export default {
      */
     SpreadAttribute: ( { parent, node, figure, compile } ) => {
         figure.root().addFunction( '__spread', sourceNode( [
-            'function (node, attr) {\n',
-            '  for (var property in attr) if (attr.hasOwnProperty(property)) {\n',
-            `    if (property in ${esc( arrayToObject( plainAttributes ) )}) {\n`,
-            '      node[property] = attr[property];\n',
-            '    } else {\n',
-            '      node.setAttribute(property, attr[property]);\n',
+            'function( node, attr ) {\n',
+            '    for ( let property in attr ) if ( attr.hasOwnProperty( property ) ) {\n',
+            `        if ( property in ${esc( arrayToObject( plainAttributes ) )} ) {\n`,
+            '              node[ property ] = attr[ property ];\n',
+            '        } else {\n',
+            '              node.setAttribute( property, attr[ property ] );\n',
+            '        }\n',
             '    }\n',
-            '  }\n',
             '}'
         ] ) );
 
         let [ expr ] = compileToExpression( figure, node, compile );
         const variables = collectVariables( figure.getScope(), expr );
-        const sn = sourceNode( node.loc, `      __spread(${parent.reference}, ${compile( expr )})` );
+        const sn = sourceNode( node.loc, `            __spread( ${parent.reference}, ${compile( expr )} )` );
         if ( variables.length > 0 ) {
             figure.spot( variables ).add( sn );
         } else {
@@ -175,7 +175,7 @@ export function compileToExpression( figure, node, compile ) {
         pushDefaults( node.body[ 1 ] );
 
         let at = expr;
-        for ( var i = 2; i < node.body.length; i++ ) {
+        for ( let i = 2; i < node.body.length; i++ ) {
             at = at.right = new ast.BinaryExpressionNode( '+',
                 at.right,
                 extract( node.body[ i ] ),
@@ -201,7 +201,7 @@ function attr( loc, reference, attrName, value ) {
         return sourceNode( loc, [ reference, '.', attrName, ' = ', value, ';' ] );
     } else {
         return sourceNode( loc,
-            [ reference, '.setAttribute(', esc( attrName ), ', ', value, ');' ] );
+            [ reference, '.setAttribute( ', esc( attrName ), ', ', value, ' );' ] );
     }
 }
 
@@ -215,7 +215,7 @@ function defaultAttrValue( attrName ) {
     if ( booleanAttributes.indexOf( attrName ) !== -1 ) {
         return 'true';
     } else {
-        return '""';
+        return '\'\'';
     }
 }
 

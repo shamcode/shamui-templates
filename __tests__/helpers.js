@@ -1,4 +1,4 @@
-import ShamUI, { DI } from 'sham-ui';
+import { start, DI } from 'sham-ui';
 import { Compiler } from '../lib/index';
 import { sourceNode } from '../lib/compiler/sourceNode';
 import { transformSync } from '@babel/core';
@@ -42,24 +42,18 @@ export function compileAsSFC( strings ) {
 }
 
 export function renderComponent( componentConstructor, options = {} ) {
-    return new Promise( resolve => {
-        let component;
-        DI.bind( 'component-binder', function() {
-            component = new componentConstructor( {
-                ID: 'dummy',
-                containerSelector: 'body',
-                ...options
-            } );
-        } );
-        const UI = new ShamUI();
-        UI.render.one( 'RenderComplete', () => {
-            const body = document.querySelector( 'body' );
-            resolve( {
-                component,
-                html: body.innerHTML,
-                text: body.textContent
-            } );
-        } );
-        UI.render.ALL();
+    DI.resolve( 'sham-ui:store' ).clear();
+    const body = document.querySelector( 'body' );
+    body.innerHTML = '';
+    const component = new componentConstructor( {
+        ID: 'dummy',
+        container: body,
+        ...options
     } );
+    start();
+    return {
+        component,
+        html: body.innerHTML,
+        text: body.textContent
+    };
 }

@@ -197,21 +197,6 @@ it( 'should render attributes without quotes', async() => {
     expect( html ).toBe( '<div class="name"></div>' );
 } );
 
-it( 'should work querySelector', async() => {
-    expect.assertions( 3 );
-    const { component } = await renderComponent(
-        compile`
-            <div id="one" class="foo"></div>
-            <div id="two" class="boo">
-                <div id="three" class="baz"></div>
-            </div>
-        `
-    );
-    expect( component.querySelector( '.foo' ).getAttribute( 'id' ) ).toEqual( 'one' );
-    expect( component.querySelector( '.boo' ).getAttribute( 'id' ) ).toEqual( 'two' );
-    expect( component.querySelector( '.baz' ).getAttribute( 'id' ) ).toEqual( 'three' );
-} );
-
 it( 'should support global variables', async() => {
     expect.assertions( 2 );
     const first = await renderComponent(
@@ -273,23 +258,13 @@ it( 'should replace HTML entities with Unicode symbols', async() => {
     expect( html ).toBe( '"&amp;\'&lt;&gt;©£±¶ — € ♥&amp;notExists;' );
 } );
 
-it( 'should don\'t lose options descriptors after update', async() => {
-    expect.assertions( 2 );
-    const { html, component } = await renderComponent(
-        compile`<span>Dummy</span>`
-    );
-    expect( html ).toBe( '<span>Dummy</span>' );
-    expect( component.options.types ).toEqual( [] );
-} );
-
-it( 'should override options', async() => {
-    expect.assertions( 4 );
+it( 'should override options', () => {
     class ExtendedDummy extends compile`<span>{{text}}</span>` {
         @options get text() {
             return 'Foo';
         }
     }
-    const { html, component } = await renderComponent( ExtendedDummy );
+    const { html, component } = renderComponent( ExtendedDummy );
     expect( component.options.text ).toBe( 'Foo' );
 
     expect( html ).toBe( '<span>Foo</span>' );

@@ -1,8 +1,6 @@
 import { compileAsSFC, renderComponent } from './helpers';
 
-it( 'function bind correctly work with directives', async() => {
-    expect.assertions( 3 );
-
+it( 'function bind correctly work with directives', () => {
     class OnClickEventListener {
         constructor() {
             this.handler = null;
@@ -27,7 +25,7 @@ it( 'function bind correctly work with directives', async() => {
     }
 
     const handler = jest.fn();
-    const { html, component } = await renderComponent(
+    const { html, component } = renderComponent(
         compileAsSFC`
         <template>
             <button :onclick={{::this.click}}>click me</button>
@@ -51,7 +49,7 @@ it( 'function bind correctly work with directives', async() => {
     expect( html ).toBe(
         '<button>click me</button>'
     );
-    component.querySelector( 'button' ).click();
+    component.container.querySelector( 'button' ).click();
 
     expect( handler ).toHaveBeenCalledTimes( 1 );
     expect( handler ).toHaveBeenCalledWith( component, 'click' );

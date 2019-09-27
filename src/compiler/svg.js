@@ -6,14 +6,14 @@ export default {
         node.reference = node.name + figure.uniqid();
 
         figure.declare( sourceNode( node.loc,
-            `var ${node.reference} = document.createElementNS('http://www.w3.org/2000/svg', '${node.name}');`
+            `const ${node.reference} = document.createElementNS( 'http://www.w3.org/2000/svg', '${node.name}' );`
         ) );
 
         let children = node.body.map( ( child ) => compile( child ) ).filter( notNull );
 
         for ( let child of children ) {
             figure.construct(
-                sourceNode( `${node.reference}.appendChild(${child});` )
+                sourceNode( `${node.reference}.appendChild( ${child} );` )
             );
         }
 

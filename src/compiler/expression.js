@@ -29,7 +29,7 @@ function buildBindContextAndCallee( bind, figure, compile ) {
         }
     } else {
         context = `context${figure.uniqid( 'context' )}`;
-        figure.declare( sourceNode( bind.loc, `var ${context.name};` ) );
+        figure.declare( sourceNode( bind.loc, `let ${context.name};` ) );
     }
     if ( bind.object ) {
         callee = `(${context} = ${compile( bind.object )}, ${compile( bind.callee )})`;
@@ -54,7 +54,7 @@ export default {
         }
 
         figure.declare(
-            sourceNode( `var ${node.reference} = document.createTextNode(${defaultValue});` )
+            sourceNode( `const ${node.reference} = document.createTextNode( ${defaultValue} );` )
         );
 
         let variables = collectVariables( figure.getScope(), node.expression );
@@ -67,7 +67,11 @@ export default {
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc,
-                    [ '      ', node.reference, '.textContent = ', compile( node.expression ) ] )
+                    [
+                        '                ',
+                        node.reference, '.textContent = ', compile( node.expression )
+                    ]
+                )
             );
         }
 
@@ -82,7 +86,7 @@ export default {
             prefix = '_this.filters.';
         }
 
-        let sn = sourceNode( node.loc, [ prefix, compile( node.callee ), '(' ] );
+        let sn = sourceNode( node.loc, [ prefix, compile( node.callee ), '( ' ] );
 
         for ( let i = 0; i < node.arguments.length; i++ ) {
             if ( i !== 0 ) {
@@ -92,18 +96,18 @@ export default {
             sn.add( compile( node.arguments[ i ] ) );
         }
 
-        return sn.add( ')' );
+        return sn.add( ' )' );
     },
 
     BindExpression: ( { node, figure, compile } ) => {
         const { context, callee } = buildBindContextAndCallee( node, figure, compile );
         return sourceNode( node.loc, [
-            callee, '.bind(', context, ')'
+            callee, '.bind( ', context, ' )'
         ] );
     },
 
     ArrayExpression: ( { node, compile } ) => {
-        let sn = sourceNode( node.loc, '[' );
+        let sn = sourceNode( node.loc, '[ ' );
         let elements = node.elements;
 
         for ( let i = 0; i < node.elements.length; i++ ) {
@@ -114,11 +118,11 @@ export default {
             sn.add( compile( elements[ i ] ) );
         }
 
-        return sn.add( ']' );
+        return sn.add( ' ]' );
     },
 
     ObjectExpression: ( { node, compile } ) => {
-        let sn = sourceNode( node.loc, '({' );
+        let sn = sourceNode( node.loc, '( { ' );
 
         for ( let i = 0; i < node.properties.length; i++ ) {
             let prop = node.properties[ i ];
@@ -136,7 +140,7 @@ export default {
                 let params = value.params;
                 let body = value.body;
 
-                sn.add( [ kind, ' ', compile( key ), '(' ] );
+                sn.add( [ kind, ' ', compile( key ), '( ' ] );
 
                 for ( let j = 0; j < params.length; j++ ) {
                     if ( j !== 0 ) {
@@ -146,17 +150,17 @@ export default {
                     sn.add( compile( params[ j ] ) );
                 }
 
-                sn.add( ') { ' );
+                sn.add( ' ) { ' );
 
                 for ( let j = 0; j < body.length; j++ ) {
                     sn.add( [ compile( body[ j ] ), ' ' ] );
                 }
 
-                sn.add( '}' );
+                sn.add( ' }' );
             }
         }
 
-        return sn.add( '})' );
+        return sn.add( ' } )' );
     },
 
     SequenceExpression: ( { node, compile } ) => {
@@ -179,46 +183,49 @@ export default {
             node.operator === 'void' ||
             node.operator === 'typeof'
         ) {
-            return sourceNode( node.loc, [ node.operator, ' (', compile( node.argument ), ')' ] );
+            return sourceNode( node.loc, [ node.operator, ' ( ', compile( node.argument ), ' )' ] );
         } else {
-            return sourceNode( node.loc, [ node.operator, '(', compile( node.argument ), ')' ] );
+            return sourceNode( node.loc, [ node.operator, '( ', compile( node.argument ), ' )' ] );
         }
     },
 
     BinaryExpression: ( { node, compile } ) => {
         return sourceNode( node.loc,
-            [ '(', compile( node.left ), ') ', node.operator, ' (', compile( node.right ), ')' ] );
+            [ '( ', compile( node.left ), ' ) ', node.operator, ' ( ', compile( node.right ), ' )' ]
+        );
     },
 
     AssignmentExpression: ( { node, compile } ) => {
         return sourceNode( node.loc,
-            [ '(', compile( node.left ), ') ', node.operator, ' (', compile( node.right ), ')' ] );
+            [ '( ', compile( node.left ), ' ) ', node.operator, ' ( ', compile( node.right ), ' )' ]
+        );
     },
 
     UpdateExpression: ( { node, compile } ) => {
         if ( node.prefix ) {
-            return sourceNode( node.loc, [ '(', node.operator, compile( node.argument ), ')' ] );
+            return sourceNode( node.loc, [ '( ', node.operator, compile( node.argument ), ' )' ] );
         } else {
-            return sourceNode( node.loc, [ '(', compile( node.argument ), node.operator, ')' ] );
+            return sourceNode( node.loc, [ '( ', compile( node.argument ), node.operator, ' )' ] );
         }
     },
 
     LogicalExpression: ( { node, compile } ) => {
-        return sourceNode( node.loc,
-            [ '(', compile( node.left ), ') ', node.operator, ' (' + compile( node.right ), ')' ] );
+        return sourceNode( node.loc, [
+            '( ', compile( node.left ), ' ) ', node.operator, ' ( ' + compile( node.right ), ' )'
+        ] );
     },
 
     ConditionalExpression: ( { node, compile } ) => {
         return sourceNode( node.loc,
             // eslint-disable-next-line max-len
-            [ '(', compile( node.test ), ') ? ', compile( node.consequent ), ' : ', compile( node.alternate ) ] );
+            [ '( ', compile( node.test ), ' ) ? ', compile( node.consequent ), ' : ', compile( node.alternate ) ] );
     },
 
     NewExpression: ( { node, compile } ) => {
         let sn = sourceNode( node.loc, [ 'new ', compile( node.callee ) ] );
 
         if ( node.arguments !== null ) {
-            sn.add( '(' );
+            sn.add( '( ' );
 
             for ( let i = 0; i < node.arguments.length; i++ ) {
                 if ( i !== 0 ) {
@@ -228,7 +235,7 @@ export default {
                 sn.add( compile( node.arguments[ i ] ) );
             }
 
-            sn.add( ')' );
+            sn.add( ' )' );
         }
 
         return sn;
@@ -240,7 +247,7 @@ export default {
             const bind = node.callee;
             const { context, callee } = buildBindContextAndCallee( bind, figure );
             sn = sourceNode( node.loc, [
-                callee, '.call(', context
+                callee, '.call( ', context
             ] );
             if ( node.arguments.length > 0 ) {
                 sn.add( ', ' );
@@ -257,13 +264,13 @@ export default {
             sn.add( compile( node.arguments[ i ] ) );
         }
 
-        return sn.add( ')' );
+        return sn.add( ' )' );
     },
 
     MemberExpression: ( { node, compile } ) => {
         if ( node.computed ) {
             return sourceNode( node.loc,
-                [ compile( node.object ), '[', compile( node.property ), ']' ] );
+                [ compile( node.object ), '[ ', compile( node.property ), ' ]' ] );
         } else {
             return sourceNode( node.loc,
                 [ compile( node.object ), '.', compile( node.property ) ] );

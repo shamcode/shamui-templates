@@ -15,10 +15,10 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `var ${placeholder} = document.createComment('for');` ) );
+            figure.declare( sourceNode( `const ${placeholder} = document.createComment( 'for' );` ) );
         }
 
-        figure.declare( sourceNode( `var ${childrenName} = new __UI__.Map();` ) );
+        figure.declare( sourceNode( `const ${childrenName} = new __UI__.Map();` ) );
 
         // for (
 
@@ -27,14 +27,14 @@ export default {
         figure.thisRef = true;
         figure.spot( variablesOfExpression ).add(
             sourceNode( node.loc, [
-                `      __UI__.loop(_this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                `                __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
                 compile( node.expr ),
                 ', ',
                 (
                     node.options === null ? 'null' : esc( node.options )
                 ),
                 `, ${figure.getPathToDocument()}`,
-                ')'
+                ' )'
             ] )
         );
 
@@ -53,14 +53,10 @@ export default {
         figure.addOnUpdate(
             node.options === null ?
                 sourceNode( node.loc, [
-                    `    ${childrenName}.forEach(function (view) {\n`,
-                    '      view.update(view.__state__);\n',
-                    '    });'
+                    `            ${childrenName}.forEach( ( view ) => view.update( view.__state__ ) );`
                 ] ) :
                 sourceNode( node.loc, [
-                    `    ${childrenName}.forEach(function (view) {\n`,
-                    '      view.update(Object.assign({}, __data__, view.__state__));\n',
-                    '    });'
+                    `    ${childrenName}.forEach( ( view ) => view.update( Object.assign( {}, __data__, view.__state__ ) ) );`
                 ] )
         );
 

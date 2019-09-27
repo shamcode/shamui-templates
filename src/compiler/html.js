@@ -7,14 +7,14 @@ export default {
 
         figure.declare(
             sourceNode( node.loc,
-                `var ${node.reference} = document.createElement('${node.name}');` )
+                `const ${node.reference} = document.createElement( '${node.name}' );` )
         );
 
         let children = node.body.map( ( child ) => compile( child ) ).filter( notNull );
 
         for ( let child of children ) {
             figure.construct(
-                sourceNode( `${node.reference}.appendChild(${child});` )
+                sourceNode( `${node.reference}.appendChild( ${child} );` )
             );
         }
 

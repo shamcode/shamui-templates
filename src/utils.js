@@ -3,7 +3,8 @@ export function esc( str ) {
 }
 
 export function size( obj ) {
-    var size = 0, key;
+    let size = 0,
+        key;
     for ( key in obj ) {
         if ( obj.hasOwnProperty( key ) ) {
             size++;
@@ -45,8 +46,8 @@ export function getStringLiteralValue( literal ) {
 }
 
 export function arrayToObject( array, value = 1 ) {
-    var obj = {};
-    for ( var i = 0; i < array.length; i++ ) {
+    const obj = {};
+    for ( let i = 0; i < array.length; i++ ) {
         obj[ array[ i ] ] = value;
     }
     return obj;

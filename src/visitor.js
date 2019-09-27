@@ -16,7 +16,7 @@ const visitors = {
     Document: ( node, visitor ) => {
         handle( node, visitor );
 
-        for ( var i = 0; i < node.body.length; i++ ) {
+        for ( let i = 0; i < node.body.length; i++ ) {
             visit( node.body[ i ], visitor );
         }
     },
@@ -118,9 +118,9 @@ const visitors = {
         handle( node, visitor );
 
         visit( node.callee, visitor );
-        var args = node.arguments;
+        const args = node.arguments;
 
-        for ( var i = 0, len = args.length; i < len; i++ ) {
+        for ( let i = 0, len = args.length; i < len; i++ ) {
             visit( args[ i ], visitor );
         }
     },
@@ -134,29 +134,25 @@ const visitors = {
     ArrayExpression: ( node, visitor ) => {
         handle( node, visitor );
 
-        var elements = node.elements;
+        const elements = node.elements;
 
-        for ( var i = 0, len = elements.length; i < len; i++ ) {
+        for ( let i = 0, len = elements.length; i < len; i++ ) {
             visit( elements[ i ], visitor );
         }
     },
     ObjectExpression: ( node, visitor ) => {
         handle( node, visitor );
 
-        var i, j, properties = node.properties, len, plen, blen;
+        let i, j, properties = node.properties, len, plen, blen;
 
         for ( i = 0, len = properties.length; i < len; i++ ) {
-            var prop = properties[ i ];
-            var kind = prop.kind;
-            var key = prop.key;
-            var value = prop.value;
+            const { kind, key, value } = properties[ i ];
 
             if ( kind === 'init' ) {
                 visit( key, visitor );
                 visit( value, visitor );
             } else {
-                var params = value.params;
-                var body = value.body;
+                const { params, body } = value.params;
 
                 visit( key, visitor );
 
@@ -173,9 +169,9 @@ const visitors = {
     SequenceExpression: ( node, visitor ) => {
         handle( node, visitor );
 
-        var expressions = node.expressions;
+        const expressions = node.expressions;
 
-        for ( var i = 0, len = expressions.length; i < len; i++ ) {
+        for ( let i = 0, len = expressions.length; i < len; i++ ) {
             visit( expressions[ i ], visitor );
         }
     },
@@ -219,10 +215,10 @@ const visitors = {
         handle( node, visitor );
 
         visit( node.callee, visitor );
-        var args = node.arguments;
+        const args = node.arguments;
 
         if ( args !== null ) {
-            for ( var i = 0, len = args.length; i < len; i++ ) {
+            for ( let i = 0, len = args.length; i < len; i++ ) {
                 visit( args[ i ], visitor );
             }
         }
@@ -231,9 +227,9 @@ const visitors = {
         handle( node, visitor );
 
         visit( node.callee, visitor );
-        var args = node.arguments;
+        const args = node.arguments;
 
-        for ( var i = 0, len = args.length; i < len; i++ ) {
+        for ( let i = 0, len = args.length; i < len; i++ ) {
             visit( args[ i ], visitor );
         }
     },

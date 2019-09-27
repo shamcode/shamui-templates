@@ -31,12 +31,12 @@ export class Figure {
         let sn = sourceNode( '' );
 
         if ( this.imports.length > 0 ) {
-            sn.add( sourceNode( this.imports ).join( '\n' ) );
-            sn.add( '\n' );
             if ( this.requireDefaultNeed ) {
                 // eslint-disable-next-line max-len
-                sn.add( 'function __requireDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }\n' );
+                sn.add( 'function __requireDefault( obj ) { return obj && obj.__esModule ? obj.default : obj; }\n\n' );
             }
+            sn.add( sourceNode( this.imports ).join( '\n' ) );
+            sn.add( '\n' );
         }
 
         if ( size( this.functions ) > 0 ) {
@@ -46,106 +46,102 @@ export class Figure {
 
         sn.add( [
             '\n',
-            '/**\n',
-            ' * @class\n',
-            ' */\n',
-            `function ${this.name}() {\n`,
-            '  __UI__.Component.apply(this, arguments);\n'
+            `class ${this.name} extends __UI__.Component {\n`,
+            '    constructor( options ) {\n',
+            '        super( options );\n',
+            '\n'
         ] );
 
-        if ( this.isCacheNeeded() ) {
-            sn.add( '  this.__cache__ = {};\n' );
+        if ( this.thisRef ) {
+            sn.add( '        const _this = this;\n' );
+        }
+
+        const cacheNeeded = this.isCacheNeeded();
+        if ( cacheNeeded ) {
+            sn.add( '        this.__cache__ = {};\n' );
         }
 
         if ( this.stateNeed ) {
-            sn.add( '  this.__data__ = {};\n' );
+            sn.add( '        this.__data__ = {};\n' );
         }
 
-        if ( this.thisRef ) {
-            sn.add( '  var _this = this;\n' );
+        if ( this.thisRef || cacheNeeded || this.stateNeed ) {
+            sn.add( '\n' );
         }
-
-        sn.add( '\n' );
 
         if ( this.declarations.length > 0 ) {
             sn.add( [
-                '  // Create elements\n',
-                '  ', sourceNode( this.declarations ).join( '\n  ' ),
+                '        // Create elements\n',
+                '        ', sourceNode( this.declarations ).join( '\n        ' ),
                 '\n\n'
             ] );
         }
 
         if ( this.constructions.length > 0 ) {
             sn.add( [
-                '  // Construct dom\n',
-                '  ', sourceNode( null, this.constructions ).join( '\n  ' ),
+                '        // Construct dom\n',
+                '        ', sourceNode( null, this.constructions ).join( '\n        ' ),
                 '\n\n'
             ] );
         }
 
         if ( this.directives.length > 0 ) {
             sn.add( [
-                '  // Directives\n',
-                '  ', sourceNode( null, this.directives ).join( '\n  ' ),
+                '        // Directives\n',
+                sourceNode( null, this.directives ).join( '\n        ' ),
                 '\n\n'
             ] );
         }
 
         if ( size( this.spots ) > 0 ) {
             sn.add( [
-                '  // Update functions\n',
-                '  this.__update__ = {\n',
-                this.generateSpots(), '\n',
-                '  };\n',
+                '        // Update functions\n',
+                '        this.__update__ = {\n',
+                '        ', this.generateSpots(), '\n',
+                '        };\n',
                 '\n'
             ] );
         }
 
         if ( this.renderActions.length > 0 ) {
             sn.add( [
-                '  // Extra render actions\n',
-                '  this.onRender = function () {\n',
+                '        // Extra render actions\n',
+                '        this.onRender = function() {\n',
                 sourceNode( this.renderActions ).join( '\n' ), '\n',
-                '  };\n',
+                '        };\n',
                 '\n'
             ] );
         }
 
         if ( this.onUpdate.length > 0 ) {
             sn.add( [
-                '  // On update actions\n',
-                '  this.onUpdate = function (__data__) {\n',
+                '        // On update actions\n',
+                '        this.onUpdate = function( __data__ ) {\n',
                 sourceNode( this.onUpdate ).join( '\n' ), '\n',
-                '  };\n',
+                '        };\n',
                 '\n'
             ] );
         }
 
         if ( this.onRemove.length > 0 ) {
             sn.add( [
-                '  // On remove actions\n',
-                '  this.onRemove = function (__data__) {\n',
+                '        // On remove actions\n',
+                '        this.onRemove = function( __data__ ) {\n',
                 sourceNode( this.onRemove ).join( '\n' ), '\n',
-                '  };\n',
+                '        };\n',
                 '\n'
             ] );
         }
 
-        sn.add( [
-            '  // Set root nodes\n',
-            '  this.nodes = [', sourceNode( this.children ).join( ', ' ), '];\n'
-        ] );
-
         if ( this.blocksNeed ) {
             sn.add( [
-                '\n',
-                '  // Blocks\n'
+                '        // Blocks\n'
             ] );
             if ( 0 === this.blocks.length || null === this.parent ) {
-                sn.add( '  this.blocks = {};\n' );
+                sn.add( '        this.blocks = {};\n' );
             } else {
                 sn.add( [
-                    '  this.blocks = this.owner.blocks;\n'
+                    '        this.blocks = this.owner.blocks;\n'
                 ] );
             }
             if ( this.blocks.length > 0 ) {
@@ -154,18 +150,21 @@ export class Figure {
                     '\n'
                 ] );
             }
+            sn.add( '\n' );
         }
 
-        sn.add( '}\n' );
-
         sn.add( [
-            `${this.name}.prototype = Object.create(__UI__.Component.prototype);\n`,
-            `${this.name}.prototype.constructor = ${this.name};\n`
+            '        // Set root nodes\n',
+            '        this.nodes = [ ', sourceNode( this.children ).join( ', ' ), ' ];\n'
         ] );
+
+        sn.add( '    }\n' );
 
         if ( size( this.spots ) > 0 || this.onUpdate.length > 0 ) {
             sn.add( this.generateUpdateSpotsFunction() );
         }
+
+        sn.add( '}\n' );
 
         for ( let subfigure of this.subFigures ) {
             sn.add( subfigure.generate() );
@@ -179,22 +178,22 @@ export class Figure {
     }
 
     generateFunctions() {
-        var defn = [];
+        const defn = [];
         Object.keys( this.functions ).forEach( ( key ) => {
-            defn.push( sourceNode( `${key} = ${this.functions[ key ]}` ) );
+            defn.push( sourceNode( `const ${key} = ${this.functions[ key ]};` ) );
         } );
-        return sourceNode( 'var ' ).add( sourceNode( defn ).join( ',\n' ) ).add( ';\n' );
+        return sourceNode( defn ).join( '\n' ).add( '\n' );
     }
 
     generateSpots() {
-        var parts = [];
+        const parts = [];
 
         Object.keys( this.spots )
             .map( x => this.spots[ x ] )
             .filter( spot => spot.operators.length > 0 )
             .map( spot => {
                 parts.push(
-                    sourceNode( [ '    ', spot.reference, ': ', spot.generate() ] )
+                    sourceNode( [ '    ', spot.reference, spot.generate() ] )
                 );
             } );
 
@@ -202,9 +201,10 @@ export class Figure {
     }
 
     generateUpdateSpotsFunction() {
-        let sn = sourceNode(
-            `${this.name}.prototype.updateSpots = function(__data__) {\n`
-        );
+        let sn = sourceNode( [
+            '\n',
+            '    updateSpots( __data__ ) {\n'
+        ] );
 
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
             .sort( ( a, b ) => a.length - b.length );
@@ -213,21 +213,21 @@ export class Figure {
             if ( spot.length === 1 ) {
                 let name = spot.variables[ 0 ];
 
-                sn.add( `  if (__data__.${name} !== undefined` );
+                sn.add( `        if ( __data__.${name} !== undefined` );
                 if ( spot.onlyFromLoop ) {
                     sn.add( ' && __data__.__index__ !== undefined' );
                 }
-                sn.add( ') {\n' );
+                sn.add( ' ) {\n' );
 
                 if ( spot.cache ) {
-                    sn.add( `    this.__cache__.${name} = __data__.${name};\n` );
+                    sn.add( `            this.__cache__.${name} = __data__.${name};\n` );
                 }
 
                 if ( spot.operators.length > 0 ) {
-                    sn.add( `    this.__update__.${spot.reference}(__data__.${name});\n` );
+                    sn.add( `            this.__update__.${spot.reference}( __data__.${name} );\n` );
                 }
 
-                sn.add( '  }\n' );
+                sn.add( '        }\n' );
             } else {
 
                 let cond = sourceNode( spot.variables.map( name => `this.__cache__.${name} !== undefined` ) )
@@ -236,18 +236,18 @@ export class Figure {
                     .join( ', ' );
 
                 sn.add( [
-                    '  if (', cond, ') {\n',
-                    `    this.__update__.${spot.reference}(`, params, ');\n',
-                    '  }\n'
+                    '        if ( ', cond, ' ) {\n',
+                    `            this.__update__.${spot.reference}( `, params, ' );\n',
+                    '        }\n'
                 ] );
             }
         }
 
         if ( this.onUpdate.length > 0 ) {
-            sn.add( '  this.onUpdate(__data__);\n' );
+            sn.add( '        this.onUpdate( __data__ );\n' );
         }
 
-        sn.add( '};\n' );
+        sn.add( '    }\n' );
         return sn;
     }
 
