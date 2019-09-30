@@ -21,6 +21,9 @@ export default {
         figure.thisRef = true;
         figure.declare( sourceNode( `const ${childName} = {};` ) );
 
+        const blockRef = `${childName}_blocks`;
+        figure.addBlock( blockRef );
+
         let data = [];
         let variables = [];
 
@@ -52,32 +55,30 @@ export default {
         data = `{${data.join( ', ' )}}`;
 
 
-        let blockCode = `__UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()} )`;
+        const mountCode = `__UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()}, ${blockRef} )`;
 
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {
             const spot = figure.spot( variables );
-            node.addBlockMethod = spot.add.bind( spot );
-            blockCode = `                ${blockCode}`;
+            spot.add(
+                sourceNode( node.loc, `                ${mountCode}` )
+            );
         } else {
-            node.addBlockMethod = figure.addRenderActions.bind( figure );
-            blockCode = `            ${blockCode}`;
+            figure.addRenderActions(
+                sourceNode( node.loc, `            ${mountCode}` )
+            );
         }
-        node.addBlockMethod(
-            sourceNode( node.loc, blockCode )
-        );
+
 
         if ( node.body.length > 0 ) {
-            node.childName = `${childName}.ref`;
-            node.pathToDocument = figure.getPathToDocument();
+            node.addBlock = ( sn ) => {
+                figure.addBlock( blockRef, sn );
+            };
             figure.children = node.body
                 .map( ( child ) => compile( child, figure ) )
                 .filter( notNull );
-            delete node.childName;
-            delete node.pathToDocument;
+            delete node.addBlock;
         }
-
-        delete node.addBlockMethod;
 
         return node.reference;
     }

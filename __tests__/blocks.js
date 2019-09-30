@@ -6,15 +6,21 @@ beforeEach( () => {
             {% defblock %}
         </a>
     `;
+
+    window.DisplayContent = compile`
+        {% if condition %}
+            {% defblock %}
+        {% endif %}
+    `;
 } );
 
 afterEach( () => {
     delete window.LinkTo;
+    delete window.DisplayContent;
 } );
 
-it( 'should work with {% block "default" %}', async() => {
-    expect.assertions( 1 );
-    const { html } = await renderComponent(
+it( 'should work with {% block "default" %}', () => {
+    const { html } = renderComponent(
         compile`
             <div>
                 <LinkTo>
@@ -31,8 +37,7 @@ it( 'should work with {% block "default" %}', async() => {
     );
 } );
 
-it( 'should work with two named blocks', async() => {
-    expect.assertions( 1 );
+it( 'should work with two named blocks', () => {
     window.CustomPanel = compile`
         <div>
             <div class="title">
@@ -43,7 +48,7 @@ it( 'should work with two named blocks', async() => {
             </div>
         </div>
     `;
-    const { html } = await renderComponent(
+    const { html } = renderComponent(
         compile`
             <div>
                 <CustomPanel>
@@ -66,9 +71,8 @@ it( 'should work with two named blocks', async() => {
     delete window.CustomPanel;
 } );
 
-it( 'should work with component arguments', async() => {
-    expect.assertions( 2 );
-    const { html, component } = await renderComponent(
+it( 'should work with component arguments', () => {
+    const { html, component } = renderComponent(
         compile`
             <div>
                 <LinkTo url={{url}}>
@@ -95,9 +99,8 @@ it( 'should work with component arguments', async() => {
     );
 } );
 
-it( 'should work with component default block', async() => {
-    expect.assertions( 2 );
-    const { html, component } = await renderComponent(
+it( 'should work with component default block', () => {
+    const { html, component } = renderComponent(
         compile`
             <div>
                 <LinkTo url={{url}}>
@@ -122,8 +125,7 @@ it( 'should work with component default block', async() => {
     );
 } );
 
-it( 'should remove block in if', async() => {
-    expect.assertions( 3 );
+it( 'should remove block in if', () => {
     window.VisibleBlock = compile`
         {% if visible %}
             <div class="content">
@@ -131,7 +133,7 @@ it( 'should remove block in if', async() => {
             </div>
         {% endif %}
     `;
-    const { html, component } = await renderComponent(
+    const { html, component } = renderComponent(
         compile`
             <VisibleBlock visible={{visible}}>
                 Text content for {{data}}
@@ -162,8 +164,7 @@ it( 'should remove block in if', async() => {
     delete window.VisibleBlock;
 } );
 
-it( 'should work with two nested if', async() => {
-    expect.assertions( 3 );
+it( 'should work with two nested if', () => {
     window.BigRedButton = compile`
         {% if big %}
             {% if red %} 
@@ -171,7 +172,7 @@ it( 'should work with two nested if', async() => {
             {% endif %}
         {% endif %}
     `;
-    const { html, component } = await renderComponent(
+    const { html, component } = renderComponent(
         compile`
             <BigRedButton big={{big}} red={{red}}>
                 big && red
@@ -199,8 +200,7 @@ it( 'should work with two nested if', async() => {
     delete window.BigRedButton;
 } );
 
-it( 'should work with defblock nested in useblock', async() => {
-    expect.assertions( 4 );
+it( 'should work with defblock nested in useblock', () => {
     window.LoadedContainer = compile`
         {% if loaded %}
             {% defblock %}
@@ -220,7 +220,7 @@ it( 'should work with defblock nested in useblock', async() => {
             {% endif %}
         </LoadedVisibleContainer>
     `;
-    const { html, component } = await renderComponent(
+    const { html, component } = renderComponent(
         compile`
             <RedLoadedVisibleContainer loaded={{loaded}} visible={{visible}} red={{red}}>
                 red && loaded & visible
@@ -264,9 +264,8 @@ it( 'should work with defblock nested in useblock', async() => {
     delete window.RedLoadedVisibleContainer;
 } );
 
-it( 'should work with for', async() => {
-    expect.assertions( 2 );
-    const { html, component } = await renderComponent(
+it( 'should work with for', () => {
+    const { html, component } = renderComponent(
         compile`
             <ul>
                 {% for url of links %}
@@ -315,4 +314,25 @@ it( 'should work with for', async() => {
         '</ul>' +
         '<a href="http://example.com">Home<!--default--></a><!--LinkTo-->'
     );
+} );
+
+it( 'should work useblock if was update from block component', () => {
+    const { component } = renderComponent(
+        compile`
+            <DisplayContent>
+                Content
+            </DisplayContent>
+        `,
+        {
+
+        }
+    );
+    expect( component.container.textContent.trim() ).toBe( '' );
+
+    const displayContent = component.UI.find( x => x instanceof window.DisplayContent );
+    displayContent.update( { condition: true } );
+    expect( component.container.textContent.trim() ).toBe( 'Content' );
+
+    displayContent.update( { condition: false } );
+    expect( component.container.textContent.trim() ).toBe( '' );
 } );

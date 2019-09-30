@@ -32,14 +32,11 @@ export default {
 
         compileBody( node.loc, node.body, templateName, childName );
 
-        const varName = `block_${blockName}`;
-        const blockVar = `${varName}${figure.uniqid( varName )}`;
-        parent.addBlockMethod(
+        parent.addBlock(
             sourceNode( node.loc, [
-                `                const ${blockVar} = ${parent.childName}.blocks[ '${blockName}' ];\n`,
-                `                if ( ${blockVar} ) {\n`,
-                `                    __UI__.insert( ${blockVar}.component, ${blockVar}.node, ${childName}, ${templateName}, _this.__data__, ${parent.pathToDocument} );\n`,
-                '                }'
+                `            '${blockName}'( node, block ) {\n`,
+                `                __UI__.insert( block, node, ${childName}, ${templateName}, _this.__data__, _this, _this.blocks );\n`,
+                '            }'
             ] )
         );
 

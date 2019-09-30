@@ -1,6 +1,6 @@
 import { start, DI } from 'sham-ui';
-import { Compiler } from '../lib/index';
-import { sourceNode } from '../lib/compiler/sourceNode';
+import { Compiler } from '../src/index';
+import { sourceNode } from '../src/compiler/sourceNode';
 import { transformSync } from '@babel/core';
 import rootPackage from '../package.json';
 

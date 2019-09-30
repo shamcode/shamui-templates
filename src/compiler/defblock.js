@@ -6,24 +6,18 @@ export default {
         const name = getStringLiteralValue( node.name );
         const placeholder = `${name}Block`;
         node.reference = placeholder;
-        figure.blocksNeed = true;
+        figure.thisRef = true;
         figure.declare(
             sourceNode( `const ${placeholder} = document.createComment( '${name}' );` )
         );
-        figure.addBlock(
+
+        figure.addRenderActions(
             sourceNode( [
-                `        this.blocks[ '${name}' ] = {\n`,
-                `            node: ${placeholder},\n`,
-                '            component: this\n',
-                '        };'
+                `            if ( _this.blocks[ '${name}' ] ) {\n`,
+                `                _this.blocks[ '${name}' ]( ${placeholder}, _this );\n`,
+                '            }'
             ] )
         );
-        figure.addOnRemove(
-            sourceNode( node.loc, [
-                `            delete this.blocks[ '${name}' ];`
-            ] )
-        );
-        figure.root().blocksNeed = true;
         return node.reference;
     }
 };

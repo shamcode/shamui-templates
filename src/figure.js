@@ -20,8 +20,7 @@ export class Figure {
         this.scope = [];
         this.onUpdate = [];
         this.onRemove = [];
-        this.blocks = [];
-        this.blocksNeed = false;
+        this.blocks = {};
         this.thisRef = false;
         this.stateNeed = false;
         this.requireDefaultNeed = true;
@@ -93,6 +92,14 @@ export class Figure {
             ] );
         }
 
+        if ( size( this.blocks ) > 0 ) {
+            sn.add( [
+                '        // Blocks\n',
+                this.generateBlocks(),
+                '\n\n'
+            ] );
+        }
+
         if ( size( this.spots ) > 0 ) {
             sn.add( [
                 '        // Update functions\n',
@@ -131,26 +138,6 @@ export class Figure {
                 '        };\n',
                 '\n'
             ] );
-        }
-
-        if ( this.blocksNeed ) {
-            sn.add( [
-                '        // Blocks\n'
-            ] );
-            if ( 0 === this.blocks.length || null === this.parent ) {
-                sn.add( '        this.blocks = {};\n' );
-            } else {
-                sn.add( [
-                    '        this.blocks = this.owner.blocks;\n'
-                ] );
-            }
-            if ( this.blocks.length > 0 ) {
-                sn.add( [
-                    sourceNode( this.blocks ).join( '\n' ),
-                    '\n'
-                ] );
-            }
-            sn.add( '\n' );
         }
 
         sn.add( [
@@ -249,6 +236,28 @@ export class Figure {
 
         sn.add( '    }\n' );
         return sn;
+    }
+
+    generateBlocks() {
+        const parts = [];
+
+        Object.keys( this.blocks )
+            .map( componentRef => {
+                const block = this.blocks[ componentRef ];
+                if ( 0 === block.length ) {
+                    parts.push( sourceNode(
+                        `        const ${componentRef} = {};`
+                    ) );
+                } else {
+                    parts.push( sourceNode( [
+                        `        const ${componentRef} = {\n`,
+                        block.join( ',\n' ), '\n',
+                        '        };'
+                    ] ) );
+                }
+            } );
+
+        return sourceNode( null, parts ).join( '\n' );
     }
 
     uniqid( name = 'default' ) {
@@ -364,8 +373,13 @@ export class Figure {
         this.directives.push( node );
     }
 
-    addBlock( node ) {
-        this.blocks.push( node );
+    addBlock( componentName, block ) {
+        if ( !this.blocks[ componentName ] ) {
+            this.blocks[ componentName ] = [];
+        }
+        if ( block ) {
+            this.blocks[ componentName ].push( block );
+        }
     }
 
     addScriptCode( node ) {
