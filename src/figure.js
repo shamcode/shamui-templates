@@ -113,7 +113,7 @@ export class Figure {
         if ( this.renderActions.length > 0 ) {
             sn.add( [
                 '        // Extra render actions\n',
-                '        this.onRender = function() {\n',
+                '        this.onRender = () => {\n',
                 sourceNode( this.renderActions ).join( '\n' ), '\n',
                 '        };\n',
                 '\n'
@@ -123,7 +123,7 @@ export class Figure {
         if ( this.onUpdate.length > 0 ) {
             sn.add( [
                 '        // On update actions\n',
-                '        this.onUpdate = function( __data__ ) {\n',
+                '        this.onUpdate = ( __data__ ) => {\n',
                 sourceNode( this.onUpdate ).join( '\n' ), '\n',
                 '        };\n',
                 '\n'
@@ -133,7 +133,7 @@ export class Figure {
         if ( this.onRemove.length > 0 ) {
             sn.add( [
                 '        // On remove actions\n',
-                '        this.onRemove = function( __data__ ) {\n',
+                '        this.onRemove = ( __data__ ) => {\n',
                 sourceNode( this.onRemove ).join( '\n' ), '\n',
                 '        };\n',
                 '\n'
@@ -315,7 +315,10 @@ export class Figure {
     }
 
     getPathToDocument() {
-        return this.parent ? '_this.owner' : '_this';
+        if ( this.thisRef ) {
+            return this.parent ? '_this.owner' : '_this';
+        }
+        return this.parent ? 'this.owner' : 'this';
     }
 
     getScope() {

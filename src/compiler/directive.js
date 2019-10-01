@@ -17,12 +17,11 @@ export default {
         const directive = hyphensToCamelCase( node.name ) + 'Directive' +
             figure.uniqid( 'directive_name' );
 
-        figure.thisRef = true;
         figure.addDirective( sourceNode( node.loc, `        let ${directive};` ) );
         figure.addRenderActions(
             sourceNode( node.loc, [
                 `            if ( ${directive} === undefined ) {\n`,
-                `                ${directive} = new _this.directives.${node.name}( ${figure.getPathToDocument()} );\n`,
+                `                ${directive} = new this.directives.${node.name}( ${figure.getPathToDocument()} );\n`,
                 '            }\n',
                 `            ${directive}.bind( ${parent.reference} );`
             ] )

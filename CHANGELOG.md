@@ -3,6 +3,7 @@
 * Fix links to `sham-ui` repo
 * Reimplement blocks for support update from block owner component ( block owner updated -> render block usage )
 * Update `sham-ui`
+* Remove unactual `thisRef`s
 
 ## 3.2.5
 * Update dependencies
