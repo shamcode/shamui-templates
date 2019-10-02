@@ -4,6 +4,7 @@
 * Reimplement blocks for support update from block owner component ( block owner updated -> render block usage )
 * Update `sham-ui`
 * Remove unactual `thisRef`s
+* Add `removeDataTest` compiler options 
 
 ## 3.2.5
 * Update dependencies

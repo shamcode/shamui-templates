@@ -29,11 +29,28 @@ export function compile( strings ) {
     return evalComponent( node.toString() );
 }
 
+export function compileWithOptions( options ) {
+    const compilerWithOptions = new Compiler( {
+        ...options,
+        asModule: false
+    } );
+    return function( strings ) {
+        const node = sourceNode( '' );
+        node.add(
+            compilerWithOptions.compile(
+                'dummy.sht',
+                strings.join( '\n' ).trim()
+            )
+        );
+        return evalComponent( node.toString() );
+    };
+}
+
 export function compileAsSFC( strings ) {
     const node = sourceNode( '' );
     node.add(
         compilerForSFC.compile(
-            'dummy.shw',
+            'dummy.sfc',
             strings.join( '\n' ).trim()
         )
     );

@@ -30,7 +30,13 @@ export default {
      * @param {Figure} figure
      * @param {Function} compile
      */
-    Attribute: ( { parent, node, figure, compile } ) => {
+    Attribute: ( { parent, node, figure, compile, options } ) => {
+        if ( options.removeDataTest && node.name.startsWith( 'data-test-' ) ) {
+
+            // Ignore `data-test-` attribute
+            return;
+        }
+
         let [ expr, defaults ] = compileToExpression( figure, node, compile );
 
         const variables = collectVariables( figure.getScope(), expr );

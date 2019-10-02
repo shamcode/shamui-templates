@@ -11,7 +11,8 @@ export class Compiler {
     constructor( options = {} ) {
         this.options = Object.assign( {
             asModule: true,
-            asSingleFileComponent: false
+            asSingleFileComponent: false,
+            removeDataTest: true
         }, options );
         this.transforms = [ whitespace, entity, defaultBlock, sfc ];
         this.globals = [
