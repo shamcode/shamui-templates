@@ -1,4 +1,4 @@
-## master
+## 4.0.0
 * Generate ES6 class 
 * Fix links to `sham-ui` repo
 * Reimplement blocks for support update from block owner component ( block owner updated -> render block usage )
