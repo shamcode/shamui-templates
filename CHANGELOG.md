@@ -1,3 +1,6 @@
+## 4.0.1
+* Update `sham-ui`
+
 ## 4.0.0
 * Generate ES6 class 
 * Fix links to `sham-ui` repo

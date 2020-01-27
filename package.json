@@ -1,6 +1,6 @@
 {
   "name": "sham-ui-templates",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Template support for [sham-ui](https://github.com/sham-ui/sham-ui), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
@@ -77,7 +77,7 @@
   "license": "MIT",
   "dependencies": {
     "asciitree": "^1.0.2",
-    "sham-ui": "4.0.0",
+    "sham-ui": "4.0.1",
     "source-map": "^0.5.7"
   },
   "devDependencies": {
