@@ -1,3 +1,6 @@
+## 4.0.2
+* Fix pass options to block component after finish update
+
 ## 4.0.1
 * Update `sham-ui`
 
