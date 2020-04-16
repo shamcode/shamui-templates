@@ -42,6 +42,8 @@ Text [^<{]+
 AttributeText [^\"{]+
 
 %x html
+%x open-raw-tag
+%x raw
 %x attr
 %x regexp
 %x expr
@@ -62,6 +64,8 @@ AttributeText [^\"{]+
 <html>"hr"                         return "HR";
 <html>"link"                       return "LINK";
 <html>"meta"                       return "META";
+<html>"script"                     this.begin("open-raw-tag"); return "SCRIPT";
+<html>"style"                      this.begin("open-raw-tag"); return "STYLE";
 <html>([\w-]+)                     return "IDENTIFIER";
 <html>\s+                          /* skip whitespaces */
 <html>":"                          return ":";
@@ -69,6 +73,20 @@ AttributeText [^\"{]+
 <html>"{{"                         this.begin("expr"); return "{{";
 <html>(\")                         this.begin("attr"); return "QUOTE";
 <html>"/"                          return "/";
+
+<open-raw-tag>">"                  this.begin("raw"); return ">";
+<open-raw-tag>"script"             this.popState(); return "SCRIPT";
+<open-raw-tag>"style"              this.popState(); return "STYLE";
+<open-raw-tag>([\w-]+)             return "IDENTIFIER";
+<open-raw-tag>\s+                  /* skip whitespaces */
+<open-raw-tag>":"                  return ":";
+<open-raw-tag>"="                  return "=";
+<open-raw-tag>"{{"                 this.begin("expr"); return "{{";
+<open-raw-tag>(\")                 this.begin("attr"); return "QUOTE";
+<open-raw-tag>"/"                  return "/";
+
+<raw>"</"                          this.popState(); return "</"
+<raw>((?!\<\/).|\r|\n)+            return "RAW";
 
 <attr>"{"                          return "TEXT";
 <attr>"{{"                         this.begin("expr"); return "{{";
@@ -211,17 +229,39 @@ Element
             $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @4));
         }
     | "<" EmptyTag AttributeList "/" ">"
-            {
-                $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @5));
-            }
+        {
+            $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @5));
+        }
     | "<" IDENTIFIER AttributeList "/" ">"
         {
             $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @5));
+        }
+    | "<" RawContentTag AttributeList ">" "</" RawContentTag ">"
+        {
+            if ($2 == $6) {
+                $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @7));
+            } else {
+                throw new SyntaxError(
+                    "Syntax error on line " + (yylineno + 1) + ":\n" +
+                    "Tag identifiers should be same (<" + $2 + "> != </" + $6 + ">)"
+                );
+            }
         }
     | "<" IDENTIFIER AttributeList ">" "<" "/" IDENTIFIER ">"
         {
             if ($2 == $7) {
                 $$ = new ElementNode($2, $3, [], createSourceLocation(@1, @8));
+            } else {
+                throw new SyntaxError(
+                    "Syntax error on line " + (yylineno + 1) + ":\n" +
+                    "Tag identifiers should be same (<" + $2 + "> != </" + $7 + ">)"
+                );
+            }
+        }
+    | "<" RawContentTag AttributeList ">" RawContent "</" RawContentTag ">"
+        {
+            if ($2 == $7) {
+                $$ = new ElementNode($2, $3, [$5], createSourceLocation(@1, @8));
             } else {
                 throw new SyntaxError(
                     "Syntax error on line " + (yylineno + 1) + ":\n" +
@@ -249,6 +289,18 @@ EmptyTag
     | HR
     | LINK
     | META
+    ;
+
+RawContentTag
+    : SCRIPT
+    | STYLE
+    ;
+
+RawContent
+    : RAW
+        {
+            $$ = new TextNode($1, createSourceLocation(@1, @1));
+        }
     ;
 
 Statement

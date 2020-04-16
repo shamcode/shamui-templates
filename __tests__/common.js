@@ -274,3 +274,10 @@ it( 'should override options', () => {
     expect( component.container.innerHTML ).toBe( '<span>Bar</span>' );
     expect( component.options.text ).toBe( 'Bar' );
 } );
+
+it( 'should ignore script tag content', () => {
+    const { html } = renderComponent(
+        compile`<script> var result = 2 < 5;</script>`
+    );
+    expect( html ).toBe( '<script> var result = 2 < 5;</script>' );
+} );

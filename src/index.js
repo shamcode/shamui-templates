@@ -44,7 +44,7 @@ export class Compiler {
         let ast = parser.parse( filename, code );
 
         // Transform.
-        this.transforms.forEach( transform => transform( ast ) );
+        this.transforms.forEach( transform => transform( ast, this.options ) );
 
         return drawGraph( ast );
     }
