@@ -1,4 +1,4 @@
-# master
+# 4.1.0
 * Fix parsing `<script></script> content [#76](https://github.com/sham-ui/sham-ui-templates/issues/76)
 * Fix work with class getters [#77](https://github.com/sham-ui/sham-ui-templates/issues/77)
 
