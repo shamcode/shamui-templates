@@ -1,5 +1,6 @@
 # master
 * Fix parsing `<script></script> content [#76](https://github.com/sham-ui/sham-ui-templates/issues/76)
+* Fix work with class getters [#77](https://github.com/sham-ui/sham-ui-templates/issues/77)
 
 ## 4.0.2
 * Fix pass options to block component after finish update

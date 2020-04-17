@@ -22,22 +22,38 @@ export default {
 
         // for (
 
+        figure.thisRef = true;
+
         let variablesOfExpression = collectVariables( figure.getScope(), node.expr );
 
-        figure.thisRef = true;
-        figure.spot( variablesOfExpression ).add(
-            sourceNode( node.loc, [
-                `                __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
-                compile( node.expr ),
-                ', ',
-                (
-                    node.options === null ? 'null' : esc( node.options )
-                ),
-                `, ${figure.getPathToDocument()}`,
-                ' )'
-            ] )
-        );
+        if ( variablesOfExpression.length > 0 ) {
+            figure.spot( variablesOfExpression ).add(
+                sourceNode( node.loc, [
+                    `                __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    compile( node.expr ),
+                    ', ',
+                    (
+                        node.options === null ? 'null' : esc( node.options )
+                    ),
+                    `, ${figure.getPathToDocument()}`,
+                    ' )'
+                ] )
+            );
+        }  else {
+            figure.addOnUpdate(
+                sourceNode( node.loc, [
+                    `            __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    compile( node.expr ),
+                    ', ',
+                    (
+                        node.options === null ? 'null' : esc( node.options )
+                    ),
+                    `, ${figure.getPathToDocument()}`,
+                    ' )'
+                ] )
 
+            );
+        }
 
         // ) {
 
@@ -56,7 +72,7 @@ export default {
                     `            ${childrenName}.forEach( ( view ) => view.update( view.__state__ ) );`
                 ] ) :
                 sourceNode( node.loc, [
-                    `    ${childrenName}.forEach( ( view ) => view.update( Object.assign( {}, __data__, view.__state__ ) ) );`
+                    `            ${childrenName}.forEach( ( view ) => view.update( Object.assign( {}, __data__, view.__state__ ) ) );`
                 ] )
         );
 

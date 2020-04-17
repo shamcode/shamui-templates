@@ -34,22 +34,42 @@ export default {
         figure.thisRef = true;
         figure.hasNested = true;
 
-        figure.spot( variablesOfExpression ).add(
-            sourceNode( node.loc, [
-                '                ',
-                node.otherwise ? 'result = ' : '',
-                `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                    node.cond ), `, ${figure.getPathToDocument()} )`
-            ] )
-        );
-
-        if ( node.otherwise ) {
+        if ( variablesOfExpression.length > 0 ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
                     '                ',
-                    `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
+                    node.otherwise ? 'result = ' : '',
+                    `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                        node.cond ), `, ${figure.getPathToDocument()} )`
                 ] )
-            ).declareVariable( 'result' );
+            );
+
+            if ( node.otherwise ) {
+                figure.spot( variablesOfExpression ).add(
+                    sourceNode( node.loc, [
+                        '                ',
+                        `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
+                    ] )
+                ).declareVariable( 'result' );
+            }
+        } else {
+            figure.addOnUpdate(
+                sourceNode( node.loc, [
+                    '            ',
+                    node.otherwise ? 'result = ' : '',
+                    `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                        node.cond ), `, ${figure.getPathToDocument()} )`
+                ] )
+            );
+
+            if ( node.otherwise ) {
+                figure.addOnUpdate(
+                    sourceNode( node.loc, [
+                        '           ',
+                        `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
+                    ] )
+                ).declareVariable( 'result' );
+            }
         }
 
         // ) then {

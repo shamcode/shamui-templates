@@ -114,3 +114,74 @@ it( 'should single file component correct work with context in blocks', async() 
 
     delete window.CustomPanel;
 } );
+
+it( 'should work with class getters in expressions', () => {
+    const { html } = renderComponent(
+        compileAsSFC`
+        <template>
+            <span>{{this.user}}</span>
+        </template>
+        
+        <script>
+            class dummy extends Template {
+                get user() {
+                    return 'John Smith';
+                };
+            }
+        </script>
+        `
+    );
+    expect( html ).toBe( '<span>John Smith</span>' );
+} );
+
+it( 'should work with class getters in if', () => {
+    const { html } = renderComponent(
+        compileAsSFC`
+        <template>
+            {% if this.isVisible %}
+                <span>{{user}}</span>
+            {% endif %}
+        </template>
+        
+        <script>
+            class dummy extends Template {
+                get isVisible() {
+                    return true;
+                };
+            }
+        </script>
+        `,
+        {
+            user: 'Joh Smith'
+        }
+    );
+    expect( html ).toBe( '<span>Joh Smith</span><!--if-->' );
+} );
+
+it( 'should work with class getters in for', () => {
+    const { html } = renderComponent(
+        compileAsSFC`
+        <template>
+            <ul>
+                {% for user of this.userList %}
+                    <li>{{user}}</li>
+                {% endfor %}
+            </ul>
+        </template>
+        
+        <script>
+            class dummy extends Template {
+                get userList() {
+                    return [ 
+                        'John Smith',
+                        'Adam Mock'
+                     ]
+                };
+            }
+        </script>
+        `
+    );
+    expect( html ).toBe(
+        '<ul><li>John Smith</li><li>Adam Mock</li></ul>'
+    );
+} );
