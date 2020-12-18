@@ -22,7 +22,6 @@ export class Figure {
         this.onRemove = [];
         this.blocks = {};
         this.thisRef = false;
-        this.stateNeed = false;
         this.requireDefaultNeed = true;
     }
 
@@ -52,20 +51,10 @@ export class Figure {
         ] );
 
         if ( this.thisRef ) {
-            sn.add( '        const _this = this;\n' );
-        }
-
-        const cacheNeeded = this.isCacheNeeded();
-        if ( cacheNeeded ) {
-            sn.add( '        this.__cache__ = {};\n' );
-        }
-
-        if ( this.stateNeed ) {
-            sn.add( '        this.__data__ = {};\n' );
-        }
-
-        if ( this.thisRef || cacheNeeded || this.stateNeed ) {
-            sn.add( '\n' );
+            sn.add( [
+                '        const _this = this;\n',
+                '\n'
+            ] );
         }
 
         if ( this.declarations.length > 0 ) {
@@ -102,8 +91,8 @@ export class Figure {
 
         if ( size( this.spots ) > 0 ) {
             sn.add( [
-                '        // Update functions\n',
-                '        this.__update__ = {\n',
+                '        // Update spot functions\n',
+                '        this.spots = {\n',
                 '        ', this.generateSpots(), '\n',
                 '        };\n',
                 '\n'
@@ -147,10 +136,6 @@ export class Figure {
 
         sn.add( '    }\n' );
 
-        if ( size( this.spots ) > 0 || this.onUpdate.length > 0 ) {
-            sn.add( this.generateUpdateSpotsFunction() );
-        }
-
         sn.add( '}\n' );
 
         for ( let subfigure of this.subFigures ) {
@@ -175,67 +160,44 @@ export class Figure {
     generateSpots() {
         const parts = [];
 
-        Object.keys( this.spots )
-            .map( x => this.spots[ x ] )
-            .filter( spot => spot.operators.length > 0 )
-            .map( spot => {
-                parts.push(
-                    sourceNode( [ '    ', spot.reference, spot.generate() ] )
-                );
-            } );
-
-        return sourceNode( null, parts ).join( ',\n' );
-    }
-
-    generateUpdateSpotsFunction() {
-        let sn = sourceNode( [
-            '\n',
-            '    updateSpots( __data__ ) {\n'
-        ] );
-
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
             .sort( ( a, b ) => a.length - b.length );
-
         for ( let spot of spots ) {
-            if ( spot.length === 1 ) {
-                let name = spot.variables[ 0 ];
-
-                sn.add( `        if ( __data__.${name} !== undefined` );
+            let generatedSpot;
+            if ( spot.onlyFromLoop || spot.cache || spot.length > 1 ) {
+                if ( spot.onlyFromLoop && !spot.cache && 0 === spot.operators.length ) {
+                    continue;
+                }
+                generatedSpot = sourceNode( ': {\n' );
+                const items = [];
                 if ( spot.onlyFromLoop ) {
-                    sn.add( ' && __data__.__index__ !== undefined' );
+                    items.push( sourceNode( '                loop: true' ) );
                 }
-                sn.add( ' ) {\n' );
-
                 if ( spot.cache ) {
-                    sn.add( `            this.__cache__.${name} = __data__.${name};\n` );
+                    items.push( sourceNode( '                cache: true' ) );
                 }
-
+                if ( spot.length > 1 ) {
+                    items.push( sourceNode( '                multiple: true' ) );
+                }
                 if ( spot.operators.length > 0 ) {
-                    sn.add( `            this.__update__.${spot.reference}( __data__.${name} );\n` );
+                    items.push(
+                        sourceNode( [
+                            '                op', spot.generateOperation()
+                        ] )
+                    );
                 }
-
-                sn.add( '        }\n' );
+                generatedSpot.add( items.join( ',\n' ) ).add( '\n' );
+                generatedSpot.add( '            }' );
+            } else if ( 0 === spot.operators.length ) {
+                continue;
             } else {
-
-                let cond = sourceNode( spot.variables.map( name => `this.__cache__.${name} !== undefined` ) )
-                    .join( ' && ' );
-                let params = sourceNode( spot.variables.map( name => `this.__cache__.${name}` ) )
-                    .join( ', ' );
-
-                sn.add( [
-                    '        if ( ', cond, ' ) {\n',
-                    `            this.__update__.${spot.reference}( `, params, ' );\n',
-                    '        }\n'
-                ] );
+                generatedSpot = spot.generateOperation();
             }
+            parts.push(
+                sourceNode( [ '    ', spot.reference, generatedSpot ] )
+            );
         }
-
-        if ( this.onUpdate.length > 0 ) {
-            sn.add( '        this.onUpdate( __data__ );\n' );
-        }
-
-        sn.add( '    }\n' );
-        return sn;
+        return sourceNode( null, parts ).join( ',\n        ' );
     }
 
     generateBlocks() {
@@ -287,23 +249,6 @@ export class Figure {
         }
 
         return this.spots[ s.reference ];
-    }
-
-    isCacheNeeded() {
-        let needed = false;
-
-        Object.keys( this.spots )
-            .map( x => this.spots[ x ] )
-            .forEach( spot => {
-                if ( spot.variables.length > 1 ) {
-                    needed = true;
-                }
-                if ( spot.cache ) {
-                    needed = true;
-                }
-            } );
-
-        return needed;
     }
 
     root() {

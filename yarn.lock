@@ -5293,10 +5293,10 @@ set-value@^2.0.0:
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
 
-sham-ui@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/sham-ui/-/sham-ui-4.0.1.tgz#1f08542ec2b1d3eb651a2fbdb50f7daf471e8379"
-  integrity sha512-szzt1Bd+SyD7Y3WdvF418fICawvgkofn45G0QNZPAdsLChoe3vVTaYZX2CrwXdnc0SLDP01T7RW+LR/0NM9FkA==
+sham-ui@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/sham-ui/-/sham-ui-4.1.0.tgz#24bc44e3ad429170ea6ab453517f3ea06e28bbff"
+  integrity sha512-yuMgRNTei3431REQNNu+wqUIGC8gefcW2DCkz947Cnsp2Xv+vUR914FDVMEeRMmh/E8ZkWILonPZg+U32Hbm+A==
   dependencies:
     nanoid "^1.3.1"
 

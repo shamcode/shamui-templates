@@ -12,7 +12,7 @@ export class Spot {
         this.onlyFromLoop = false;
     }
 
-    generate() {
+    generateOperation() {
         let sn = sourceNode(
             `( ${this.variables.join( ', ' )} ) {\n`
         );

@@ -1,4 +1,7 @@
-# 4.1.0
+## master
+* Move `updateSpots`, set defaults `__cache__`, `__data__` and prepare data for render blocks logic from template compiler to runtime [#123](https://github.com/sham-ui/sham-ui-templates/issues/123)
+
+## 4.1.0
 * Fix parsing `<script></script> content [#76](https://github.com/sham-ui/sham-ui-templates/issues/76)
 * Fix work with class getters [#77](https://github.com/sham-ui/sham-ui-templates/issues/77)
 

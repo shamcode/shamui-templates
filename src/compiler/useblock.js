@@ -35,9 +35,7 @@ export default {
         parent.addBlock(
             sourceNode( node.loc, [
                 `            '${blockName}'( node, block ) {\n`,
-                // eslint-disable-next-line max-len
-                '                const blockData = _this.__data__ || Object.assign( {}, _this.options );\n', // _this.__data__ can be undefined (after update finished)
-                `                __UI__.insert( block, node, ${childName}, ${templateName}, blockData , _this, _this.blocks );\n`,
+                `                __UI__.insert( block, node, ${childName}, ${templateName}, _this.dataForBlock(), _this, _this.blocks );\n`,
                 '            }'
             ] )
         );

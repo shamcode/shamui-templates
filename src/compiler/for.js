@@ -63,7 +63,6 @@ export default {
             subfigure.children = node.body.map( ( node ) => compile( node, subfigure ) )
                 .filter( notNull );
             figure.addFigure( subfigure );
-            subfigure.stateNeed = true;
         }
 
         figure.addOnUpdate(
