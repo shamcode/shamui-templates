@@ -1,4 +1,4 @@
-## master
+## 4.2.0
 * Move `updateSpots`, set defaults `__cache__`, `__data__` and prepare data for render blocks logic from template compiler to runtime [#123](https://github.com/sham-ui/sham-ui-templates/issues/123)
 
 ## 4.1.0
