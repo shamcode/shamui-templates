@@ -44,6 +44,7 @@ AttributeText [^\"{]+
 %x html
 %x open-raw-tag
 %x raw
+%x escape-identifier
 %x attr
 %x regexp
 %x expr
@@ -59,6 +60,7 @@ AttributeText [^\"{]+
 {Text}                             return "TEXT";
 
 <html>">"                          this.popState(); return ">";
+<html>"\\"                         this.begin("escape-identifier");
 <html>"input"                      return "INPUT";
 <html>"br"                         return "BR";
 <html>"hr"                         return "HR";
@@ -87,6 +89,8 @@ AttributeText [^\"{]+
 
 <raw>"</"                          this.popState(); return "</"
 <raw>((?!\<\/).|\r|\n)+            return "RAW";
+
+<escape-identifier>([\w-]+)        this.popState(); return "IDENTIFIER";
 
 <attr>"{"                          return "TEXT";
 <attr>"{{"                         this.begin("expr"); return "{{";

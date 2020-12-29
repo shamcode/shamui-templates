@@ -281,3 +281,10 @@ it( 'should ignore script tag content', () => {
     );
     expect( html ).toBe( '<script> var result = 2 < 5;</script>' );
 } );
+
+it( 'should support style attribute', () => {
+    const { html } = renderComponent(
+        compile`<div \\style="background-color: red">DANGER</div>`
+    );
+    expect( html ).toBe( '<div style="background-color: red">DANGER</div>' );
+} );
