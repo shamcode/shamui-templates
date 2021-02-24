@@ -1,4 +1,4 @@
-import { compile, renderComponent } from './helpers';
+import { compile, compileAsSFC, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.LinkTo = compile`
@@ -336,3 +336,34 @@ it( 'should work useblock if was update from block component', () => {
     displayContent.update( { condition: false } );
     expect( component.container.textContent.trim() ).toBe( '' );
 } );
+
+
+it( 'should correct resolve owner', () => {
+    const { component } = renderComponent(
+        compileAsSFC`
+            <template>
+                <LinkTo>
+                    <LinkTo>
+                        {{this._text()}}
+                    </LinkTo>
+                </LinkTo>
+            </template>
+            
+            <script>
+                import { options } from 'sham-ui';
+                class dummy extends Template {
+                    @options text() {
+                        return 'Text for content'
+                    }
+                    
+                    _text() {
+                        return this.options.text();
+                    }
+                }
+            </script>
+        `
+    );
+    expect( component.container.textContent.trim() ).toBe( 'Text for content' );
+} );
+
+

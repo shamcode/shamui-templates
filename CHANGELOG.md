@@ -1,3 +1,6 @@
+## 4.2.2
+* Fix incorrect resolve `owner` for usage block 
+
 ## 4.2.1
 * Add escaping for specific identifiers: `<div \style="background-color: red"></div>`, `<div :\input="background-color: red"></div>`
 

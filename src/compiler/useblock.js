@@ -35,7 +35,7 @@ export default {
         parent.addBlock(
             sourceNode( node.loc, [
                 `            '${blockName}'( node, block ) {\n`,
-                `                __UI__.insert( block, node, ${childName}, ${templateName}, _this.dataForBlock(), _this, _this.blocks );\n`,
+                `                __UI__.insert( block, node, ${childName}, ${templateName}, _this.dataForBlock(), ${figure.getPathToDocument()}, _this.blocks );\n`,
                 '            }'
             ] )
         );
